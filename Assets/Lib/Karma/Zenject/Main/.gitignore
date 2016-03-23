@@ -1,0 +1,4 @@
+*.suo
+*.pidb
+/bin
+/obj
