@@ -75,15 +75,20 @@ Mainly thanks to Zenject, with Karma you can create composable elements that you
 One of the mayor goals of Karma is testability. This is achieved through these mechanisms:
 1. Configurable transcient views
 2. POCO `Controllers` and `Services` that are 100% mockable
-3. Dependency Injection 
+3. Dependency Injection
 
 # Getting Started
 **Minimal Project**
 The easiest way to get started is to clone this repository and open it with Unity3D. It contains a minimal project layout with a sample `Application`, `Presenter`, `Controller` and a `Service`. Just
 
 ```
-clone 
+git clone https://github.com/cgarciae/karma.git
 ```
+
+and open the `karma` folder with Unity3D.
+
+**Minimal Project**
+Comming soon!
 
 **Guides**
 Comming soon!
