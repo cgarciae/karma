@@ -1,11 +1,11 @@
 # What is Karma?
-**MVC Framework for Unity3D**
+##### MVC Framework for Unity3D
 Karma is an MVC framework for Unity3D.
 
-**Based on Zenject**
+##### Based on Zenject
 Its built on top of Zenject which provides Dependency Injection (DI). DI is mainly used to route the app to the desired *presenter*, it also enables us to build composable and testable systems.
 
-**Inspired by AngularJS and ASP vNext**
+##### Inspired by AngularJS and ASP vNext
 Some of the basic constructs and code layout is inspired by other MVC frameworks such as AngularJS and ASP vNext.
 
 **Note to Game Developers**
