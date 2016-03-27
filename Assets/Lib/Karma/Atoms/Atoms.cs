@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Futures;
 using ModestTree.Util;
 
 namespace Atoms {
@@ -388,14 +387,7 @@ namespace Atoms {
                 .Then(f);
         }
 
-        public static Future<A> GetFuture<A>(this IEnumerable e, MonoBehaviour m) {
-            var future = new Completer<A>();
-
-            e.Then<A>((Action<A>)future.Complete);
-
-            return future;
-        }
-
+        
         public static void Run(this IEnumerable e)
         {
             var enu = e.GetEnumerator();

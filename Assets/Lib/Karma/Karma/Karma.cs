@@ -232,4 +232,11 @@ namespace Karma {
             }
         }
     }
+
+
+    public interface IEnumLoader
+    {
+        void Load(IEnumerable e);
+    }
+
 }

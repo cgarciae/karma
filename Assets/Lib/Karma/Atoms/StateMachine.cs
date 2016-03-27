@@ -2,7 +2,6 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
-using Futures;
 
 namespace Atoms {
 
@@ -138,10 +137,15 @@ namespace Atoms {
 	public class TerminalState<A> : StateBehaviour<A>
 	{
 		
-		public TerminalState (A key) : base (key, Extensions.Id<A>, Atom.DoNothing)
+		public TerminalState (A key) : base (key, Id, Atom.DoNothing)
 		{
 			
 		}
+
+        private static A Id(A value)
+        {
+            return value;
+        }
 		
 		public static TerminalState<A> _ (A key)
 		{
@@ -152,8 +156,13 @@ namespace Atoms {
 	
 	public class AbsorvingState<A> : StateBehaviour<A>
 	{
-		public AbsorvingState (A key, IEnumerable behaviour) : base (key, Extensions.Id<A>, behaviour) {}
-		
+		public AbsorvingState (A key, IEnumerable behaviour) : base (key, Id, behaviour) {}
+
+        private static A Id(A value)
+        {
+            return value;
+        }
+
 		public static AbsorvingState<A> _ (A key, IEnumerable behaviour)
 		{
 			return new AbsorvingState<A> (key, behaviour);	
