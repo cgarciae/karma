@@ -73,6 +73,7 @@ Mainly thanks to Zenject, with Karma you can create composable elements that you
 
 ##### Testable components
 One of the mayor goals of Karma is testability. This is achieved through these mechanisms:
+
 1. Configurable transcient views
 2. POCO `Controllers` and `Services` that are 100% mockable
 3. Dependency Injection
