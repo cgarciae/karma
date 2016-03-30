@@ -1,6 +1,6 @@
 # What is Karma?
 ##### MVC Framework for Unity3D
-Karma is an MVC framework for Unity3D.
+Karma is an MVC framework for Unity3D. Because of how Unity is structured, it actually turns out to be an MVCP architecture (Model/View/Controller/Presenter) where the Presenter is a MonoBehaviour that serves as an intermediary between the Controller and the View. You can read more about this in [MODEL VIEW CONTROLLER PATTERN FOR UNITY3D USER INTERFACES](http://engineering.socialpoint.es/MVC-pattern-unity3d-ui.html).
 
 ##### Based on Zenject
 It's built on top of Zenject which provides Dependency Injection (DI). DI is mainly used to route the app to the desired *presenter*, it also enables us to build composable and testable systems.
