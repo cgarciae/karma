@@ -25,6 +25,9 @@ In Karma state is mainly maintained through message passing, being as true as po
 
 The added benefit of this is that views become configurable without depending on local storage or static variables, is in turn is very important to keep a system testable.
 
+##### Pub/Sub System
+All `Presenters` integrate a pub/sub system that enables the comunication between entites on different branches and levels in the dependency hierachy. Its a simple yet powerfull message passing mechanism on channels by topic where any `Presenter` can subscribe and broadcast. By convention the top level application is used as the main channel.
+
 ##### Folder Structure + Conventions
 As many MVC frameworks, Karma tries to keep the developers sane by stablishing conventions. Among these conventions are the folder structure, concepts (presenters, controllers, services, etc), code organization, a configuration mechanism (dev, prod, test environments).
 
