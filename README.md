@@ -16,7 +16,7 @@ The "Karmic" way of doing a game would be to store each level/scene in a prefab,
 Karma has a built in routing system that enables you to create isolated views/scenes as prefabs and easily switch between them. Using an `http-like` flow, a *presenter* can `Request` the `router` to render another view.
 
 ##### As Stateless as possible
-Karma aims to be as stateless as possible to try to give you the guarantee that if you entered a view once with certain `Request` parameters and reached a successful state, then you will always reach that same state if you pass the the same parameters. Unity3D doesn't provide by default a *best practice* changing from a view to another. A common way to do this is to have all posible view instatiated in the scene but only enable the current one, the problem is that you maintain state when reusing GameObjects and often end in bad states because of the many paths you need to account for. Karma keeps things simple and functional by just destroying the *current* view and instatiates a new *next* view when changing views.
+Karma aims to be as stateless as possible to try to give you the guarantee that if you entered a view once with certain `Request` parameters and reached a successful state, then you will always reach that same state if you pass the the same parameters. Unity3D doesn't provide by default a *best practice* changing from a view to another. A common way to do this is to have all posible views instatiated in the scene but only enable the current one, the problem is that you maintain state when reusing GameObjects and often end in bad states because of the many paths you need to account for. Karma keeps things simple and functional by just destroying the *current* view and instatiates a new *next* view when changing views.
 
 ##### Message Passing
 In Karma state is mainly maintained through message passing, being as true as possible to Go's philosophy:
@@ -37,6 +37,8 @@ As many MVC frameworks, Karma tries to keep the developers sane by stablishing c
     - Extend MonoBehaviour
     - Are tied to a Prefab
     - Get instantiated on GameObjects
+    - Integrate a Pub/Sub mechanism
+    - Are Transient
     - Are divided as:
         + *Plain* Presenter (Routable)
         + Elements (Reusable)
@@ -44,20 +46,21 @@ As many MVC frameworks, Karma tries to keep the developers sane by stablishing c
 * Controllers
     - Handle the logic layer
     - **Don't** extend MonoBehavior
+    - Are Transient
     - Are 100% testable
     - Are usually coupled to a Presenter
 * Services
     - Handle Resources
     - Should be Stateless
-    - Singleton
+    - Are Singleton
     - Usually handle comunication with a server on a particular resource, local storage, specialized logic for e.g. handling certain user inputs, etc.
 * Applications
     - Handle general configuration
-    - Are also presenters
+    - Are Presenters
     - Contain the current view
     - Can be nested to create subviews
 * Router
-    - Belongs to a specific application
+    - Belongs to a specific Application
     - Tells the aplication which view to render next
     - Can store request history
 * Middleware
