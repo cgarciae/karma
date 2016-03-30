@@ -87,8 +87,8 @@ One of the major goals of Karma is testability. This is achieved through these m
 3. Dependency Injection
 
 # Getting Started
-##### Minimal Sample Project
-The easiest way to get started is to clone this repository and open it with Unity3D. It contains a minimal project layout with a sample `Application`, `Presenter`, `Controller` and a `Service`. Just
+##### Sample Project
+The easiest way to get started is to clone this repository and open it with Unity3D. It contains a sample project layout with an `Application`, `Presenter`, `Controller` and a `Service`. Just
 
 ```
 git clone https://github.com/cgarciae/karma.git
@@ -105,8 +105,6 @@ git clone https://github.com/cgarciae/karma.git
 
 and then copy the folders `/Assets/App` and `/Assets/Lib` to your project.
 
-##### Sample Projects
-Coming soon!
 
 ##### Guides
 Coming soon!
