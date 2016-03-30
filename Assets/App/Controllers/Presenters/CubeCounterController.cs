@@ -10,12 +10,19 @@ public class CubeCounterController : IController
     public CubeCounterPresenter presenter { get; private set; }
 
     public int cubes { get; private set; }
+    public CounterServices counterServices { get; private set; }
+
+    public CubeCounterController(CounterServices counterServices)
+    {
+        this.counterServices = counterServices;
+    }
 
     public void PostConstructor(CubeCounterPresenter presenter)
     {
         this.presenter = presenter;
 
         presenter.SetCubeNumber(cubes);
+        presenter.SetMaxCubeNumber(counterServices.maxValue);
     }
 
     public void OnDestroy()
@@ -25,15 +32,22 @@ public class CubeCounterController : IController
 
     internal void CubeDestroyed(object _)
     {
-        cubes -= 1;
-
-        presenter.SetCubeNumber(cubes);
+        UpdateCubeNumber(-1);
     }
 
     internal void CubeCreated()
     {
-        cubes += 1;
-
-        presenter.SetCubeNumber(cubes);
+        UpdateCubeNumber(1);
     }
+
+    internal void UpdateCubeNumber(int delta)
+    {
+        cubes += delta;
+        presenter.SetCubeNumber(cubes);
+
+        var max = counterServices.maxValue = Mathf.Max(cubes, counterServices.maxValue);
+        presenter.SetMaxCubeNumber(max);
+    }
+
+    
 }

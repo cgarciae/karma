@@ -17,6 +17,8 @@ public class CubePresenter : MVCPresenter, IPointerClickHandler
     public void PostConstructor(ICApp _app)
     {
         this.app = (MVCPresenter)_app;
+
+        RegisterOn(app, C.clearCubes, SelfDestroy);
     }
 
     public override void OnPresenterDestroy()
@@ -24,11 +26,14 @@ public class CubePresenter : MVCPresenter, IPointerClickHandler
         
     }
 
+    public void SelfDestroy(object _ = null)
+    {
+        BroadcastOn(app, C.cubeDestroyed);
+        Destroy(gameObject);
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        
-        BroadcastOn(app, C.cubeDestroyed, null);
-
-        Destroy(gameObject);
+        SelfDestroy();
     }
 }

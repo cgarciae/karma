@@ -13,6 +13,7 @@ public class CubeCounterPresenter : MVCPresenter
 
     public Transform cubeOrigin;
     public Text numberOfCubes;
+    public Text maxNumberOfCubes;
 
     public IRouter router { get; private set; }
     public MVCPresenter app { get; private set; }
@@ -46,6 +47,16 @@ public class CubeCounterPresenter : MVCPresenter
         cube.ResetTransformUnder(cubeOrigin);
 
         controller.CubeCreated();
+    }
+
+    public void ClearCubes()
+    {
+        BroadcastOn(app, C.clearCubes);
+    }
+
+    internal void SetMaxCubeNumber(int max)
+    {
+        maxNumberOfCubes.text = max.ToString();
     }
 
     public override void OnPresenterDestroy()

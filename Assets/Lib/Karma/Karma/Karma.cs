@@ -105,12 +105,12 @@ namespace Karma {
                 var topic = tuple.Second;
                 var callback = tuple.Third;
 
-                print("Unregistering " + name + "  from " + topic + " on " + presenter.name);
+                //print("Unregistering " + name + "  from " + topic + " on " + presenter.name);
 
                 presenter.Unsubscribe(topic, callback);
             });
 
-            print("Destroying " + name);
+            //print("Destroying " + name);
         }
         
 
@@ -157,11 +157,11 @@ namespace Karma {
             channelMap[topic].Broadcast(msg);
         }
 
-        public void BroadcastOn(MVCPresenter presenter, string topic, object msg)
+        public void BroadcastOn(MVCPresenter presenter, string topic, object msg = null)
         {
             var msgString = msg == null ? "null" : msg.ToString();
 
-            print(name + " broadcasting " + msgString + " on " + topic + " to " + presenter.name);
+            //print(name + " broadcasting " + msgString + " on " + topic + " to " + presenter.name);
             presenter.Broadcast(topic, msg);
         }
 
