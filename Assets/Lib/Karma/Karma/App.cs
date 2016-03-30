@@ -343,7 +343,11 @@ namespace Karma {
                 request = request
             };
 
-            if (request.layoutPath != null)
+            if (!useLayout)
+            {
+                //Do nothing
+            }
+            else if (request.layoutPath != null)
             {
                 response.layoutType = layoutsMap[request.layoutPath].Second;
             }
