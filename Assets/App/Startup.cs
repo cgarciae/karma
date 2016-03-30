@@ -14,7 +14,7 @@ public class Startup : App, ICApp
 
     public override void Init(IRouter router, DiContainer container)
     {
-        router.GoTo(CubeCounterPresenter.path);
+        router.GoTo(MenuPresenter.view);
     }
 
     public override void OnPresenterDestroy()

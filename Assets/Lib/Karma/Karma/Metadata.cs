@@ -31,7 +31,7 @@ namespace Karma.Metadata
         {
             get
             {
-                return layoutPath != null ? "presenters/" + path : null;
+                return layoutPath != null ? "views/" + path : null;
             }
         }
     }

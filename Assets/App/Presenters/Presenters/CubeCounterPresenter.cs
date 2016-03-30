@@ -6,10 +6,10 @@ using Karma.Metadata;
 using Zenject;
 using UnityEngine.UI;
 
-[Presenter(path)]
+[Presenter(view)]
 public class CubeCounterPresenter : MVCPresenter
 {
-    public const string path = "cube-counter";
+    public const string view = "cube-counter";
 
     public Transform cubeOrigin;
     public Text numberOfCubes;
@@ -43,7 +43,6 @@ public class CubeCounterPresenter : MVCPresenter
         print("Creating cube");
 
         var cube = container.Resolve<CubePresenter>();
-
         cube.ResetTransformUnder(cubeOrigin);
 
         controller.CubeCreated();
@@ -57,6 +56,11 @@ public class CubeCounterPresenter : MVCPresenter
     internal void SetMaxCubeNumber(int max)
     {
         maxNumberOfCubes.text = max.ToString();
+    }
+
+    public void GoBack()
+    {
+        router.GoTo(MenuPresenter.view);
     }
 
     public override void OnPresenterDestroy()
