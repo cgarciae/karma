@@ -105,12 +105,12 @@ namespace Karma {
                 var topic = tuple.Second;
                 var callback = tuple.Third;
 
-                //print("Unregistering " + name + "  from " + topic + " on " + presenter.name);
+                print("Unregistering " + name + "  from " + topic + " on " + presenter.name);
 
                 presenter.Unsubscribe(topic, callback);
             });
 
-            //print("Destroying " + name);
+            print("Destroying " + name);
         }
         
 

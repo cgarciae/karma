@@ -7,7 +7,7 @@ using Zenject;
 using UnityEngine.EventSystems;
 
 [Element(path)]
-public class CubePresenter : MVCPresenter, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
+public class CubePresenter : MVCPresenter, IPointerClickHandler
 {
     public const string path = "cube";
 
@@ -30,15 +30,5 @@ public class CubePresenter : MVCPresenter, IPointerClickHandler, IPointerDownHan
         BroadcastOn(app, C.cubeDestroyed, null);
 
         Destroy(gameObject);
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        
     }
 }
