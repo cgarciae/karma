@@ -105,6 +105,16 @@ git clone https://github.com/cgarciae/karma.git
 
 and then copy the folders `/Assets/App` and `/Assets/Lib` to your project.
 
+##### Videos
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=OFKYqwdJa2Y
+" target="_blank"><img src="http://img.youtube.com/vi/OFKYqwdJa2Y/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=Eomb25t0GDk
+" target="_blank"><img src="http://img.youtube.com/vi/Eomb25t0GDk/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
 
 ##### Guides
 Coming soon!
