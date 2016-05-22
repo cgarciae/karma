@@ -118,7 +118,7 @@ alt="Dependency Injection" width="600" height="400" border="10" /></a>
 
 ###### Pub Sub
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=K02fGr2SU80
-" target="_blank"><img src="http://img.youtube.com/vi/Eomb25t0GDk/0.jpg" 
+" target="_blank"><img src="http://img.youtube.com/vi/K02fGr2SU80/0.jpg" 
 alt="Pub Sub" width="600" height="400" border="10" /></a>
 ##### Guides
 Coming soon!
