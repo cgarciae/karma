@@ -20,7 +20,7 @@ public class CubeCounterPresenter : MVCPresenter
     public DiContainer container { get; private set; }
     public CubeCounterController controller { get; private set; }
 
-    [PostInject]
+    [Inject]
     public void PostConstructor(IRouter router, ICApp _app, DiContainer container, CubeCounterController controller)
     {
         this.router = router;

@@ -9,7 +9,7 @@ public class Startup : App, ICApp
 {
     public override void Configure(IApplication app, DiContainer container)
     {
-        container.Bind<ICApp>().ToInstance(this);
+        container.Bind<ICApp>().FromInstance(this);
     }
 
     public override void Init(IRouter router, DiContainer container)

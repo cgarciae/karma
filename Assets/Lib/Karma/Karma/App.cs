@@ -39,8 +39,8 @@ namespace Karma {
             layoutsMap = new Dictionary<string, Tuple<IRoute, Type>>();
 
             container = new DiContainer();
-            container.Bind<IApplication>().ToInstance(this);
-            container.Bind<IRouter>().ToInstance(this);
+            container.Bind<IApplication>().FromInstance(this);
+            container.Bind<IRouter>().FromInstance(this);
 
             SetupDI();
             
@@ -108,7 +108,7 @@ namespace Karma {
                 throw new Exception(string.Format("Type '{0}' is not a MonoBehaviour", type));
 
             //container.Bind(type).ToPrefab(url, type);
-            container.Bind(type).ToTransientPrefabResource(route.fullPath);
+            container.Bind(type).FromPrefabResource(route.fullPath);
             if (dict != null)
             {
                 dict[route.path] = Tuple.New(route, type);
@@ -126,7 +126,7 @@ namespace Karma {
 
         public static void RegisterController(DiContainer container, Type type)
         {
-            container.Bind(type).ToTransient();
+            container.Bind(type).AsTransient();
         }
 
         public IApplication RegisterService(Type type)
@@ -137,7 +137,7 @@ namespace Karma {
 
         public static void RegisterService(DiContainer container, Type type)
         {
-            container.Bind(type).ToSingle();
+            container.Bind(type).AsSingle();
         }
         /*
         public IApplication RegisterRoute<T>(DiContainer container, string url) where T : MonoBehaviour
@@ -233,7 +233,7 @@ namespace Karma {
 
             A env = Cast<A>(general_env);
 
-            container.Bind<A>().ToInstance(env);
+            container.Bind<A>().FromInstance(env);
 
             return env;
         }
@@ -308,7 +308,7 @@ namespace Karma {
             return next(request)
                 .Then(resp => 
                 {
-                    container.Rebind<IRequest>().ToInstance(request);
+                    container.Rebind<IRequest>().FromInstance(request);
 
                     MVCPresenter layout = useLayout && resp.layoutType != null ?
                         (MVCPresenter)container.Resolve(resp.layoutType) :
