@@ -12,7 +12,7 @@ public class MenuPresenter : MVCPresenter
 
     public IRouter router { get; private set; }
 
-    [PostInject]
+    [Inject]
     public void PostConstructor(IRouter router)
     {
         this.router = router;

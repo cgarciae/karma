@@ -13,7 +13,7 @@ public class CubePresenter : MVCPresenter, IPointerClickHandler
 
     public MVCPresenter app { get; private set; }
 
-    [PostInject]
+    [Inject]
     public void PostConstructor(ICApp _app)
     {
         this.app = (MVCPresenter)_app;
