@@ -1,13 +1,4 @@
 using System;
-using System.Collections.Generic;
-using ModestTree;
-using System.Linq;
-
-#if !NOT_UNITY3D
-using UnityEngine;
-#endif
-
-using Zenject.Internal;
 
 namespace Zenject
 {
@@ -20,7 +11,7 @@ namespace Zenject
         {
         }
 
-        public ScopeBinder FromFactory<TConcrete, TFactory>()
+        public ScopeArgBinder FromFactory<TConcrete, TFactory>()
             where TFactory : IFactory<TConcrete>
         {
             return FromFactoryBase<TConcrete, TFactory>();

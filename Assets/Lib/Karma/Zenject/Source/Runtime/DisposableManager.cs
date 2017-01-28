@@ -15,14 +15,14 @@ namespace Zenject
             [Inject(Optional = true, Source = InjectSources.Local)]
             List<IDisposable> disposables,
             [Inject(Optional = true, Source = InjectSources.Local)]
-            List<ModestTree.Util.Tuple<Type, int>> priorities)
+            List<ValuePair<Type, int>> priorities)
         {
             foreach (var disposable in disposables)
             {
                 // Note that we use zero for unspecified priority
                 // This is nice because you can use negative or positive for before/after unspecified
                 var matches = priorities.Where(x => disposable.GetType().DerivesFromOrEqual(x.First)).Select(x => x.Second).ToList();
-                int priority = matches.IsEmpty() ? 0 : matches.Single();
+                int priority = matches.IsEmpty() ? 0 : matches.Distinct().Single();
 
                 _disposables.Add(new DisposableInfo(disposable, priority));
             }

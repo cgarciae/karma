@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using ModestTree;
-using System.Linq;
 
 namespace Zenject
 {
-    public class FactoryFromBinder<TParam1, TParam2, TParam3, TContract> : FactoryFromBinderWithParams<TContract>
+    public class FactoryFromBinder<TParam1, TParam2, TParam3, TContract> : FactoryFromBinderBase<TContract>
     {
         public FactoryFromBinder(BindInfo bindInfo, Type factoryType, BindFinalizerWrapper finalizerWrapper)
             : base(bindInfo, factoryType, finalizerWrapper)

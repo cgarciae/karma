@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using ModestTree;
 
 namespace Zenject
@@ -16,11 +14,11 @@ namespace Zenject
             }
         }
 
-        public bool InheritInSubContainers
+        public bool CopyIntoAllSubContainers
         {
             get
             {
-                return _subFinalizer.InheritInSubContainers;
+                return _subFinalizer.CopyIntoAllSubContainers;
             }
         }
 

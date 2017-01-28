@@ -18,7 +18,7 @@ namespace Zenject
             return TryGetSingletonType(type, null);
         }
 
-        public SingletonTypes? TryGetSingletonType(Type type, string concreteIdentifier)
+        public SingletonTypes? TryGetSingletonType(Type type, object concreteIdentifier)
         {
             return TryGetSingletonType(new SingletonId(type, concreteIdentifier));
         }
@@ -36,7 +36,7 @@ namespace Zenject
         }
 
         public void MarkSingleton(
-            Type type, string concreteIdentifier, SingletonTypes singletonType)
+            Type type, object concreteIdentifier, SingletonTypes singletonType)
         {
             MarkSingleton(new SingletonId(type, concreteIdentifier), singletonType);
         }

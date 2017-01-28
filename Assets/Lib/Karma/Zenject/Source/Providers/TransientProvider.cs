@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
-using Zenject;
 
 namespace Zenject
 {
@@ -10,12 +9,12 @@ namespace Zenject
     {
         readonly DiContainer _container;
         readonly Type _concreteType;
-        readonly string _concreteIdentifier;
+        readonly object _concreteIdentifier;
         readonly List<TypeValuePair> _extraArguments;
 
         public TransientProvider(
             Type concreteType, DiContainer container,
-            List<TypeValuePair> extraArguments, string concreteIdentifier)
+            List<TypeValuePair> extraArguments, object concreteIdentifier)
         {
             _container = container;
             _concreteType = concreteType;

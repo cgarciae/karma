@@ -226,18 +226,6 @@ namespace Zenject
                 "Must supply at least one concrete type to the current binding");
         }
 
-        public static void AssertIsIInstallerType(Type installerType)
-        {
-            Assert.That(installerType.DerivesFrom<IInstaller>(),
-                "Invalid installer type given during bind command.  Expected type '{0}' to derive from either 'MonoInstaller' or 'Installer'", installerType.Name());
-        }
-
-        public static void AssertIsInstallerType(Type installerType)
-        {
-            Assert.That(installerType.DerivesFrom<Installer>(),
-                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer'", installerType.Name());
-        }
-
         public static void AssertIsDerivedFromTypes(
             IEnumerable<Type> concreteTypes, IEnumerable<Type> parentTypes, InvalidBindResponses invalidBindResponse)
         {

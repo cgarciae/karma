@@ -1,24 +1,36 @@
 using System;
-using System.Collections.Generic;
 using ModestTree;
 
 namespace Zenject
 {
     public class SingleProviderBindingFinalizer : ProviderBindingFinalizer
     {
-        readonly IProvider _provider;
+        readonly Func<DiContainer, Type, IProvider> _providerFactory;
 
         public SingleProviderBindingFinalizer(
-            BindInfo bindInfo, IProvider provider)
+            BindInfo bindInfo, Func<DiContainer, Type, IProvider> providerFactory)
             : base(bindInfo)
         {
-            _provider = provider;
+            _providerFactory = providerFactory;
         }
 
         protected override void OnFinalizeBinding(DiContainer container)
         {
-            RegisterProviderForAllContracts(container, _provider);
+            if (BindInfo.ToChoice == ToChoices.Self)
+            {
+                Assert.IsEmpty(BindInfo.ToTypes);
+
+                RegisterProviderPerContract(container, _providerFactory);
+            }
+            else
+            {
+                // Empty sometimes when using convention based bindings
+                if (!BindInfo.ToTypes.IsEmpty())
+                {
+                    RegisterProvidersForAllContractsPerConcreteType(
+                        container, BindInfo.ToTypes, _providerFactory);
+                }
+            }
         }
     }
 }
-

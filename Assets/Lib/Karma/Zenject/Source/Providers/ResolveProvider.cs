@@ -40,6 +40,7 @@ namespace Zenject
         {
             var subContext = parent.CreateSubContext(_contractType, _identifier);
 
+            subContext.SourceType = InjectSources.Any;
             subContext.Optional = _isOptional;
 
             return subContext;

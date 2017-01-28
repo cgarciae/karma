@@ -1,4 +1,3 @@
-using System;
 using ModestTree;
 
 namespace Zenject
@@ -15,7 +14,7 @@ namespace Zenject
             return AsSingle(null);
         }
 
-        public ArgumentsBinder AsSingle(string concreteIdentifier)
+        public ArgumentsBinder AsSingle(object concreteIdentifier)
         {
             Assert.IsNull(BindInfo.ConcreteIdentifier);
 

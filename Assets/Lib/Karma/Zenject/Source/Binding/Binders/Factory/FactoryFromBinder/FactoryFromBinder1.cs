@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Zenject
 {
-    public class FactoryFromBinder<TParam1, TContract> : FactoryFromBinderWithParams<TContract>
+    public class FactoryFromBinder<TParam1, TContract> : FactoryFromBinderBase<TContract>
     {
         public FactoryFromBinder(
             BindInfo bindInfo,

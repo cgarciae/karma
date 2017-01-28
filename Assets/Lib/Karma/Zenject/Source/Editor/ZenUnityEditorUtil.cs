@@ -4,21 +4,107 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ModestTree.Util;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using ModestTree;
-using Zenject.Internal;
-using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace Zenject
 {
     public static class ZenUnityEditorUtil
     {
+        // Don't use this
+        public static void ValidateCurrentSceneSetup()
+        {
+            Assert.That(!ProjectContext.HasInstance);
+            ProjectContext.ValidateOnNextRun = true;
+
+            foreach (var sceneContext in GetAllSceneContexts())
+            {
+                try
+                {
+                    sceneContext.Validate();
+                }
+                catch (Exception e)
+                {
+                    // Add a bit more context
+                    throw new ZenjectException(
+                        "Scene '{0}' Failed Validation!".Fmt(sceneContext.gameObject.scene.name), e);
+                }
+            }
+        }
+
+        // Don't use this
+        public static void RunCurrentSceneSetup()
+        {
+            Assert.That(!ProjectContext.HasInstance);
+
+            foreach (var sceneContext in GetAllSceneContexts())
+            {
+                try
+                {
+                    sceneContext.Run();
+                }
+                catch (Exception e)
+                {
+                    // Add a bit more context
+                    throw new ZenjectException(
+                        "Scene '{0}' Failed To Start!".Fmt(sceneContext.gameObject.scene.name), e);
+                }
+            }
+        }
+
+        static IEnumerable<SceneContext> GetAllSceneContexts()
+        {
+            var decoratedSceneNames = new List<string>();
+
+            for (int i = 0; i < EditorSceneManager.sceneCount; i++)
+            {
+                var scene = EditorSceneManager.GetSceneAt(i);
+
+                var sceneContexts = scene.GetRootGameObjects()
+                    .SelectMany(x => x.GetComponentsInChildren<SceneContext>()).ToList();
+
+                var decoratorContexts = scene.GetRootGameObjects()
+                    .SelectMany(x => x.GetComponentsInChildren<SceneDecoratorContext>()).ToList();
+
+                if (!sceneContexts.IsEmpty())
+                {
+                    Assert.That(decoratorContexts.IsEmpty(),
+                        "Found both SceneDecoratorContext and SceneContext in the same scene '{0}'.  This is not allowed", scene.name);
+
+                    Assert.That(sceneContexts.IsLength(1),
+                        "Found multiple SceneContexts in scene '{0}'.  Expected a maximum of one.", scene.name);
+
+                    var context = sceneContexts[0];
+
+                    decoratedSceneNames.RemoveAll(x => context.ContractNames.Contains(x));
+
+                    yield return context;
+                }
+                else if (!decoratorContexts.IsEmpty())
+                {
+                    Assert.That(decoratorContexts.IsLength(1),
+                        "Found multiple SceneDecoratorContexts in scene '{0}'.  Expected a maximum of one.", scene.name);
+
+                    var context = decoratorContexts[0];
+
+                    Assert.That(!string.IsNullOrEmpty(context.DecoratedContractName),
+                        "Missing Decorated Contract Name on SceneDecoratorContext in scene '{0}'", scene.name);
+
+                    decoratedSceneNames.Add(context.DecoratedContractName);
+                }
+            }
+
+            Assert.That(decoratedSceneNames.IsEmpty(),
+                "Found decorator scenes without a corresponding scene to decorator.  Missing scene contracts: {0}", decoratedSceneNames.Join(", "));
+        }
+
         public static string ConvertFullAbsolutePathToAssetPath(string fullPath)
         {
             return "Assets/" + Path.GetFullPath(fullPath)
-                .Substring(Path.GetFullPath(Application.dataPath).Length + 1)
+                .Remove(0, Path.GetFullPath(Application.dataPath).Length + 1)
                 .Replace("\\", "/");
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ModestTree;
 
@@ -76,10 +75,10 @@ namespace Zenject
             var allInstances = creator.GetAllInstances(context, args);
 
             Assert.That(!allInstances.IsEmpty(),
-                "Provider returned zero instances when one was expected");
+                "Provider returned zero instances when one was expected when looking up type '{0}'", context.MemberType.Name());
 
             Assert.That(allInstances.Count == 1,
-                "Provider returned multiple instances when only one was expected");
+                "Provider returned multiple instances when only one was expected when looking up type '{0}'", context.MemberType.Name());
 
             return allInstances[0];
         }

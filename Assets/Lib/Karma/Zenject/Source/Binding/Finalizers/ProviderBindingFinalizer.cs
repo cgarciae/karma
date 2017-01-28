@@ -12,11 +12,11 @@ namespace Zenject
             BindInfo = bindInfo;
         }
 
-        public bool InheritInSubContainers
+        public bool CopyIntoAllSubContainers
         {
             get
             {
-                return BindInfo.InheritInSubContainers;
+                return BindInfo.CopyIntoAllSubContainers;
             }
         }
 

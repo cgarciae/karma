@@ -9,12 +9,12 @@ namespace Zenject
 {
     public class PrefabBindingFinalizer : ProviderBindingFinalizer
     {
-        readonly GameObjectBindInfo _gameObjectBindInfo;
+        readonly GameObjectCreationParameters _gameObjectBindInfo;
         readonly UnityEngine.Object _prefab;
 
         public PrefabBindingFinalizer(
             BindInfo bindInfo,
-            GameObjectBindInfo gameObjectBindInfo,
+            GameObjectCreationParameters gameObjectBindInfo,
             UnityEngine.Object prefab)
             : base(bindInfo)
         {
@@ -61,8 +61,7 @@ namespace Zenject
                         (_, concreteType) => container.SingletonProviderCreator.CreateProviderForPrefab(
                             _prefab,
                             concreteType,
-                            _gameObjectBindInfo.Name,
-                            _gameObjectBindInfo.GroupName,
+                            _gameObjectBindInfo,
                             BindInfo.Arguments,
                             BindInfo.ConcreteIdentifier));
                     break;
@@ -77,8 +76,7 @@ namespace Zenject
                                 concreteType,
                                 new PrefabInstantiator(
                                     container,
-                                    _gameObjectBindInfo.Name,
-                                    _gameObjectBindInfo.GroupName,
+                                    _gameObjectBindInfo,
                                     BindInfo.Arguments,
                                     new PrefabProvider(_prefab))));
                     break;
@@ -88,8 +86,7 @@ namespace Zenject
                     var prefabCreator = new PrefabInstantiatorCached(
                         new PrefabInstantiator(
                             container,
-                            _gameObjectBindInfo.Name,
-                            _gameObjectBindInfo.GroupName,
+                            _gameObjectBindInfo,
                             BindInfo.Arguments,
                             new PrefabProvider(_prefab)));
 
@@ -118,8 +115,7 @@ namespace Zenject
                         (_, contractType) => container.SingletonProviderCreator.CreateProviderForPrefab(
                             _prefab,
                             contractType,
-                            _gameObjectBindInfo.Name,
-                            _gameObjectBindInfo.GroupName,
+                            _gameObjectBindInfo,
                             BindInfo.Arguments,
                             BindInfo.ConcreteIdentifier));
                     break;
@@ -133,8 +129,7 @@ namespace Zenject
                                 contractType,
                                 new PrefabInstantiator(
                                     container,
-                                    _gameObjectBindInfo.Name,
-                                    _gameObjectBindInfo.GroupName,
+                                    _gameObjectBindInfo,
                                     BindInfo.Arguments,
                                     new PrefabProvider(_prefab))));
                     break;
@@ -144,8 +139,7 @@ namespace Zenject
                     var prefabCreator = new PrefabInstantiatorCached(
                         new PrefabInstantiator(
                             container,
-                            _gameObjectBindInfo.Name,
-                            _gameObjectBindInfo.GroupName,
+                            _gameObjectBindInfo,
                             BindInfo.Arguments,
                             new PrefabProvider(_prefab)));
 

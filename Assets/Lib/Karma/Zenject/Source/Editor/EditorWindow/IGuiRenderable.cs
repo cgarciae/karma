@@ -1,5 +1,3 @@
-using System;
-
 namespace Zenject
 {
     // This is meant for use with EditorWindowContext

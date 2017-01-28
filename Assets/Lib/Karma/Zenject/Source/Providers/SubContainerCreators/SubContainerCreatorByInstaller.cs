@@ -14,13 +14,20 @@ namespace Zenject
         {
             _installerType = installerType;
             _container = container;
+
+            Assert.That(installerType.DerivesFrom<InstallerBase>(),
+                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType.Name());
         }
 
         public DiContainer CreateSubContainer(List<TypeValuePair> args)
         {
             var subContainer = _container.CreateSubContainer();
 
-            subContainer.InstallExplicit(_installerType, args);
+            var installer = (InstallerBase)subContainer.InstantiateExplicit(
+                _installerType, args);
+            installer.InstallBindings();
+
+            subContainer.ResolveDependencyRoots();
 
             return subContainer;
         }

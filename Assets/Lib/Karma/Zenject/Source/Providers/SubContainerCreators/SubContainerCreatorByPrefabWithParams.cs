@@ -3,26 +3,22 @@
 using System;
 using System.Collections.Generic;
 using ModestTree;
-using UnityEngine;
-using Zenject.Internal;
-using System.Linq;
 
 namespace Zenject
 {
     public class SubContainerCreatorByPrefabWithParams : ISubContainerCreator
     {
-        readonly string _groupName;
-        readonly string _gameObjectName;
         readonly DiContainer _container;
         readonly IPrefabProvider _prefabProvider;
         readonly Type _installerType;
+        readonly GameObjectCreationParameters _gameObjectBindInfo;
 
         public SubContainerCreatorByPrefabWithParams(
-            Type installerType, DiContainer container, IPrefabProvider prefabProvider, string gameObjectName, string groupName)
+            Type installerType, DiContainer container, IPrefabProvider prefabProvider,
+            GameObjectCreationParameters gameObjectBindInfo)
         {
+            _gameObjectBindInfo = gameObjectBindInfo;
             _prefabProvider = prefabProvider;
-            _groupName = groupName;
-            _gameObjectName = gameObjectName;
             _container = container;
             _installerType = installerType;
         }
@@ -54,12 +50,7 @@ namespace Zenject
 
             var prefab = _prefabProvider.GetPrefab();
             var gameObject = CreateTempContainer(args).InstantiatePrefab(
-                prefab, new object[0], _groupName);
-
-            if (_gameObjectName != null)
-            {
-                gameObject.name = _gameObjectName;
-            }
+                prefab, new object[0], _gameObjectBindInfo);
 
             var context = gameObject.GetComponent<GameObjectContext>();
 

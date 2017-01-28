@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 namespace Zenject
 {
@@ -39,7 +38,7 @@ namespace Zenject
         }
 
         public InjectContext CreateInjectContext(
-            DiContainer container, InjectContext currentContext, object targetInstance, string concreteIdentifier)
+            DiContainer container, InjectContext currentContext, object targetInstance, object concreteIdentifier)
         {
             var context = new InjectContext();
 

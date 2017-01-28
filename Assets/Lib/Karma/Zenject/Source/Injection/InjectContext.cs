@@ -62,7 +62,7 @@ namespace Zenject
         // Identifier - most of the time this is null
         // It will match 'foo' in this example:
         //      ... In an installer somewhere:
-        //          Container.Bind<Foo>("foo").ToSingle();
+        //          Container.Bind<Foo>("foo").AsSingle();
         //      ...
         //      ... In a constructor:
         //          public Foo([Inject(Id = "foo") Foo foo)
@@ -81,7 +81,7 @@ namespace Zenject
         // This allows you to create When() conditionals like this:
         //      ...
         //          Container.BindInstance("some text").When(c => c.ConcreteIdentifier == "foo");
-        public string ConcreteIdentifier
+        public object ConcreteIdentifier
         {
             get;
             set;

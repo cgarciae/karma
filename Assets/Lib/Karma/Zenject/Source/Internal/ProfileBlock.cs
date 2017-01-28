@@ -1,13 +1,6 @@
 //#define PROFILING_ENABLED
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-
-#if !NOT_UNITY3D
-using UnityEngine;
-#endif
 
 namespace ModestTree.Util.Debugging
 {

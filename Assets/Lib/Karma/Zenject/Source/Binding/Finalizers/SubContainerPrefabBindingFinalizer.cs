@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using ModestTree;
-using UnityEngine;
 
 namespace Zenject
 {
@@ -11,11 +10,11 @@ namespace Zenject
     {
         readonly UnityEngine.Object _prefab;
         readonly object _subIdentifier;
-        readonly GameObjectBindInfo _gameObjectBindInfo;
+        readonly GameObjectCreationParameters _gameObjectBindInfo;
 
         public SubContainerPrefabBindingFinalizer(
             BindInfo bindInfo,
-            GameObjectBindInfo gameObjectBindInfo,
+            GameObjectCreationParameters gameObjectBindInfo,
             UnityEngine.Object prefab,
             object subIdentifier)
             : base(bindInfo)
@@ -50,8 +49,7 @@ namespace Zenject
                         (_, concreteType) => container.SingletonProviderCreator.CreateProviderForSubContainerPrefab(
                             concreteType,
                             BindInfo.ConcreteIdentifier,
-                            _gameObjectBindInfo.Name,
-                            _gameObjectBindInfo.GroupName,
+                            _gameObjectBindInfo,
                             _prefab,
                             _subIdentifier));
                     break;
@@ -64,14 +62,14 @@ namespace Zenject
                         (_, concreteType) => new SubContainerDependencyProvider(
                             concreteType, _subIdentifier,
                             new SubContainerCreatorByPrefab(
-                                container, new PrefabProvider(_prefab), _gameObjectBindInfo.Name, _gameObjectBindInfo.GroupName)));
+                                container, new PrefabProvider(_prefab), _gameObjectBindInfo)));
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
                     var containerCreator = new SubContainerCreatorCached(
                         new SubContainerCreatorByPrefab(
-                            container, new PrefabProvider(_prefab), _gameObjectBindInfo.Name, _gameObjectBindInfo.GroupName));
+                            container, new PrefabProvider(_prefab), _gameObjectBindInfo));
 
                     RegisterProvidersForAllContractsPerConcreteType(
                         container,
@@ -99,8 +97,7 @@ namespace Zenject
                         (_, contractType) => container.SingletonProviderCreator.CreateProviderForSubContainerPrefab(
                             contractType,
                             BindInfo.ConcreteIdentifier,
-                            _gameObjectBindInfo.Name,
-                            _gameObjectBindInfo.GroupName,
+                            _gameObjectBindInfo,
                             _prefab,
                             _subIdentifier));
                     break;
@@ -112,14 +109,14 @@ namespace Zenject
                         (_, contractType) => new SubContainerDependencyProvider(
                             contractType, _subIdentifier,
                             new SubContainerCreatorByPrefab(
-                                container, new PrefabProvider(_prefab), _gameObjectBindInfo.Name, _gameObjectBindInfo.GroupName)));
+                                container, new PrefabProvider(_prefab), _gameObjectBindInfo)));
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
                     var containerCreator = new SubContainerCreatorCached(
                         new SubContainerCreatorByPrefab(
-                            container, new PrefabProvider(_prefab), _gameObjectBindInfo.Name, _gameObjectBindInfo.GroupName));
+                            container, new PrefabProvider(_prefab), _gameObjectBindInfo));
 
                     RegisterProviderPerContract(
                         container,

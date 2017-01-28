@@ -1,5 +1,3 @@
-using System;
-
 namespace ModestTree.Util
 {
     // C# 3.5 only defines Func and Action to a maximum of 4 generic parameters

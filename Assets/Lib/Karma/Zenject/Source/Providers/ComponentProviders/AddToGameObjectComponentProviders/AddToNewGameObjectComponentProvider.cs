@@ -2,31 +2,31 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ModestTree;
 using UnityEngine;
-using Zenject;
 
 namespace Zenject
 {
     public class AddToNewGameObjectComponentProvider : AddToGameObjectComponentProviderBase
     {
-        readonly string _gameObjectName;
-        readonly string _groupName;
+        readonly GameObjectCreationParameters _gameObjectBindInfo;
 
         public AddToNewGameObjectComponentProvider(
             DiContainer container, Type componentType,
-            string concreteIdentifier, List<TypeValuePair> extraArguments, string gameObjectName, string groupName)
+            object concreteIdentifier, List<TypeValuePair> extraArguments, GameObjectCreationParameters gameObjectBindInfo)
             : base(container, componentType, concreteIdentifier, extraArguments)
         {
-            _gameObjectName = gameObjectName;
-            _groupName = groupName;
+            _gameObjectBindInfo = gameObjectBindInfo;
         }
 
         protected override GameObject GetGameObject(InjectContext context)
         {
-            return Container.CreateEmptyGameObject(
-                _gameObjectName ?? ConcreteIdentifier ?? ComponentType.Name(), _groupName);
+            if (_gameObjectBindInfo.Name == null)
+            {
+                _gameObjectBindInfo.Name = ConcreteIdentifier as string ?? ComponentType.Name();
+            }
+
+            return Container.CreateEmptyGameObject(_gameObjectBindInfo);
         }
     }
 }

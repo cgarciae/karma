@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using Zenject.Internal;
 
 namespace Zenject
 {
@@ -22,7 +19,7 @@ namespace Zenject
         }
 
         public IProvider CreateProvider(
-            Type resultType, string concreteIdentifier, Type installerType, object identifier)
+            Type resultType, object concreteIdentifier, Type installerType, object identifier)
         {
             _markRegistry.MarkSingleton(
                 resultType, concreteIdentifier,
@@ -48,10 +45,10 @@ namespace Zenject
 
         class InstallerSingletonId : IEquatable<InstallerSingletonId>
         {
-            public readonly string ConcreteIdentifier;
+            public readonly object ConcreteIdentifier;
             public readonly Type InstallerType;
 
-            public InstallerSingletonId(string concreteIdentifier, Type installerType)
+            public InstallerSingletonId(object concreteIdentifier, Type installerType)
             {
                 ConcreteIdentifier = concreteIdentifier;
                 InstallerType = installerType;

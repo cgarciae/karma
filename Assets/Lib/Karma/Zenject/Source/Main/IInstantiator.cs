@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
 
 #if !NOT_UNITY3D
 using UnityEngine;
@@ -9,6 +7,8 @@ using UnityEngine;
 
 namespace Zenject
 {
+    // You can optionally inject this interface into your classes/factories
+    // rather than using DiContainer which contains many methods you might not need
     public interface IInstantiator
     {
         // Use this method to create any non-monobehaviour
@@ -23,7 +23,7 @@ namespace Zenject
 
         T InstantiateExplicit<T>(List<TypeValuePair> extraArgs);
         object InstantiateExplicit(Type concreteType, List<TypeValuePair> extraArgs);
-        object InstantiateExplicit(Type concreteType, bool autoInject, InjectArgs extraArgs);
+        object InstantiateExplicit(Type concreteType, bool autoInject, InjectArgs args);
 
 #if !NOT_UNITY3D
 
@@ -41,6 +41,12 @@ namespace Zenject
 
         Component InstantiateComponent(
             Type componentType, GameObject gameObject, IEnumerable<object> extraArgs);
+
+        T InstantiateComponentOnNewGameObject<T>()
+            where T : Component;
+
+        T InstantiateComponentOnNewGameObject<T>(string gameObjectName)
+            where T : Component;
 
         Component InstantiateComponentExplicit(
             Type componentType, GameObject gameObject, List<TypeValuePair> extraArgs);
@@ -145,10 +151,7 @@ namespace Zenject
         object InstantiatePrefabResourceForComponentExplicit(
             Type concreteType, string resourcePath, string groupName, InjectArgs args);
 
-        // This is the same as GameObject.Instantiate(name) except that it will use
-        // the default parent, which can sometimes be set to the Context
         GameObject CreateEmptyGameObject(string name);
-        GameObject CreateEmptyGameObject(string name, string groupName);
 #endif
     }
 }

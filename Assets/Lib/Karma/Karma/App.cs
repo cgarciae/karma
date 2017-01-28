@@ -15,8 +15,8 @@ using System.Linq;
 namespace Karma {
     public abstract class App : MVCPresenter, IApplication, IRouter
     {
-        public Dictionary<string, Tuple<IRoute,Type>> presentersMap { get; private set; }
-        public Dictionary<string, Tuple<IRoute, Type>> layoutsMap { get; private set; }
+        public Dictionary<string, ValuePair<IRoute,Type>> presentersMap { get; private set; }
+        public Dictionary<string, ValuePair<IRoute, Type>> layoutsMap { get; private set; }
         private DiContainer container { get; set; }
         public bool useHistoryOnBackButton { get; private set; }
         public IApplication app { get; private set; }
@@ -35,8 +35,8 @@ namespace Karma {
                 root = this.transform;
 
             this.app = this;
-            presentersMap = new Dictionary<string, Tuple<IRoute, Type>>();
-            layoutsMap = new Dictionary<string, Tuple<IRoute, Type>>();
+            presentersMap = new Dictionary<string, ValuePair<IRoute, Type>>();
+            layoutsMap = new Dictionary<string, ValuePair<IRoute, Type>>();
 
             container = new DiContainer();
             container.Bind<IApplication>().FromInstance(this);
@@ -102,7 +102,7 @@ namespace Karma {
         public abstract void Configure(IApplication app, DiContainer container);
         public abstract void Init(IRouter router, DiContainer container);
 
-        public IApplication RegisterPresenter(IRoute route, Type type, Dictionary<string,Tuple<IRoute, Type>> dict = null)
+        public IApplication RegisterPresenter(IRoute route, Type type, Dictionary<string, ValuePair<IRoute, Type>> dict = null)
         {
             if (!typeof(MonoBehaviour).IsAssignableFrom(type))
                 throw new Exception(string.Format("Type '{0}' is not a MonoBehaviour", type));
@@ -111,7 +111,7 @@ namespace Karma {
             container.Bind(type).FromPrefabResource(route.fullPath);
             if (dict != null)
             {
-                dict[route.path] = Tuple.New(route, type);
+                dict[route.path] = ValuePair.New(route, type);
             }
             return this;
         }
@@ -205,14 +205,14 @@ namespace Karma {
             .Start(this);
         }
 
-        public static IEnumerable<Tuple<Type, MetadataType>> GetAnnotatedTypes<MetadataType>() where MetadataType : Attribute
+        public static IEnumerable<ValuePair<Type, MetadataType>> GetAnnotatedTypes<MetadataType>() where MetadataType : Attribute
         {
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
                 foreach (var route in type.GetCustomAttributes(true))
                 {
                     if (route is MetadataType)
-                        yield return Tuple.New(type, route as MetadataType);
+                        yield return ValuePair.New(type, route as MetadataType);
                 }
             }
         }

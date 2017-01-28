@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ModestTree;
-using Zenject;
 
 namespace Zenject
 {
@@ -10,12 +8,14 @@ namespace Zenject
     {
         readonly object _instance;
         readonly Type _instanceType;
+        readonly LazyInstanceInjector _lazyInjector;
 
         public InstanceProvider(
-            Type instanceType, object instance)
+            DiContainer container, Type instanceType, object instance)
         {
             _instanceType = instanceType;
             _instance = instance;
+            _lazyInjector = container.LazyInstanceInjector;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -29,6 +29,8 @@ namespace Zenject
             Assert.IsNotNull(context);
 
             Assert.That(_instanceType.DerivesFromOrEqual(context.MemberType));
+
+            _lazyInjector.OnInstanceResolved(_instance);
 
             yield return new List<object>() { _instance };
         }

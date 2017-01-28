@@ -1,6 +1,5 @@
 #if !NOT_UNITY3D
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,12 +12,7 @@ namespace Zenject
             get;
         }
 
-        string GameObjectName
-        {
-            get;
-        }
-
-        string GameObjectGroupName
+        GameObjectCreationParameters GameObjectCreationParameters
         {
             get;
         }

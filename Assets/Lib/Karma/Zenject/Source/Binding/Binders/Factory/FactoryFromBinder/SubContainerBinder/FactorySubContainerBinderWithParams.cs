@@ -1,10 +1,5 @@
 using System;
 using ModestTree;
-using System.Linq;
-
-#if !NOT_UNITY3D
-using UnityEngine;
-#endif
 
 namespace Zenject
 {
@@ -28,9 +23,11 @@ namespace Zenject
         public GameObjectNameGroupNameBinder ByPrefab(Type installerType, UnityEngine.Object prefab)
         {
             BindingUtil.AssertIsValidPrefab(prefab);
-            BindingUtil.AssertIsIInstallerType(installerType);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            Assert.That(installerType.DerivesFrom<MonoInstaller>(),
+                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'MonoInstaller'", installerType.Name());
+
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             SubFinalizer = CreateFinalizer(
                 (container) => new SubContainerDependencyProvider(
@@ -39,8 +36,7 @@ namespace Zenject
                         installerType,
                         container,
                         new PrefabProvider(prefab),
-                        gameObjectInfo.Name,
-                        gameObjectInfo.GroupName)));
+                        gameObjectInfo)));
 
             return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
         }
@@ -56,7 +52,7 @@ namespace Zenject
         {
             BindingUtil.AssertIsValidResourcePath(resourcePath);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             SubFinalizer = CreateFinalizer(
                 (container) => new SubContainerDependencyProvider(
@@ -65,8 +61,7 @@ namespace Zenject
                         installerType,
                         container,
                         new PrefabProviderResource(resourcePath),
-                        gameObjectInfo.Name,
-                        gameObjectInfo.GroupName)));
+                        gameObjectInfo)));
 
             return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
         }

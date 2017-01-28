@@ -1,13 +1,5 @@
 using System;
-using System.Collections.Generic;
 using ModestTree;
-using System.Linq;
-
-#if !NOT_UNITY3D
-using UnityEngine;
-#endif
-
-using Zenject.Internal;
 
 namespace Zenject
 {
@@ -39,14 +31,15 @@ namespace Zenject
         }
 
         public ScopeBinder ByInstaller<TInstaller>()
-            where TInstaller : Installer
+            where TInstaller : InstallerBase
         {
             return ByInstaller(typeof(TInstaller));
         }
 
         public ScopeBinder ByInstaller(Type installerType)
         {
-            BindingUtil.AssertIsInstallerType(installerType);
+            Assert.That(installerType.DerivesFrom<InstallerBase>(),
+                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType.Name());
 
             SubFinalizer = new SubContainerInstallerBindingFinalizer(
                 _bindInfo, installerType, _subIdentifier);
@@ -68,7 +61,7 @@ namespace Zenject
         {
             BindingUtil.AssertIsValidPrefab(prefab);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             SubFinalizer = new SubContainerPrefabBindingFinalizer(
                 _bindInfo, gameObjectInfo, prefab, _subIdentifier);
@@ -80,7 +73,7 @@ namespace Zenject
         {
             BindingUtil.AssertIsValidResourcePath(resourcePath);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             SubFinalizer = new SubContainerPrefabResourceBindingFinalizer(
                 _bindInfo, gameObjectInfo, resourcePath, _subIdentifier);

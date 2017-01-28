@@ -2,17 +2,12 @@ using System;
 using System.Collections.Generic;
 using ModestTree;
 
-#if !NOT_UNITY3D
-using UnityEngine;
-#endif
-
-
 namespace Zenject
 {
     public class FactoryToChoiceBinder<TContract> : FactoryFromBinder<TContract>
     {
         public FactoryToChoiceBinder(
-            BindInfo bindInfo, Type factoryType, 
+            BindInfo bindInfo, Type factoryType,
             BindFinalizerWrapper finalizerWrapper)
             : base(bindInfo, factoryType, finalizerWrapper)
         {
@@ -42,7 +37,7 @@ namespace Zenject
     public class FactoryToChoiceIdBinder<TContract> : FactoryToChoiceBinder<TContract>
     {
         public FactoryToChoiceIdBinder(
-            BindInfo bindInfo, Type factoryType, 
+            BindInfo bindInfo, Type factoryType,
             BindFinalizerWrapper finalizerWrapper)
             : base(bindInfo, factoryType, finalizerWrapper)
         {

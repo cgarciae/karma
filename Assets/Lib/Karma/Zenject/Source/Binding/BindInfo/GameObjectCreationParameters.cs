@@ -1,9 +1,11 @@
+#if !NOT_UNITY3D
+
 using System;
-using System.Collections.Generic;
+using UnityEngine;
 
 namespace Zenject
 {
-    public class GameObjectBindInfo
+    public class GameObjectCreationParameters
     {
         public string Name
         {
@@ -17,6 +19,18 @@ namespace Zenject
             set;
         }
 
+        public Transform ParentTransform
+        {
+            get;
+            set;
+        }
+
+        public Func<DiContainer, Transform> ParentTransformGetter
+        {
+            get;
+            set;
+        }
+
         public override int GetHashCode()
         {
             unchecked // Overflow is fine, just wrap
@@ -24,15 +38,17 @@ namespace Zenject
                 int hash = 17;
                 hash = hash * 29 + (this.Name == null ? 0 : this.Name.GetHashCode());
                 hash = hash * 29 + (this.GroupName == null ? 0 : this.GroupName.GetHashCode());
+                hash = hash * 29 + (this.ParentTransform == null ? 0 : this.ParentTransform.GetHashCode());
+                hash = hash * 29 + (this.ParentTransformGetter == null ? 0 : this.ParentTransformGetter.GetHashCode());
                 return hash;
             }
         }
 
         public override bool Equals(object other)
         {
-            if (other is GameObjectBindInfo)
+            if (other is GameObjectCreationParameters)
             {
-                GameObjectBindInfo otherId = (GameObjectBindInfo)other;
+                GameObjectCreationParameters otherId = (GameObjectCreationParameters)other;
                 return otherId == this;
             }
             else
@@ -41,21 +57,22 @@ namespace Zenject
             }
         }
 
-        public bool Equals(GameObjectBindInfo that)
+        public bool Equals(GameObjectCreationParameters that)
         {
             return this == that;
         }
 
-        public static bool operator ==(GameObjectBindInfo left, GameObjectBindInfo right)
+        public static bool operator ==(GameObjectCreationParameters left, GameObjectCreationParameters right)
         {
             return object.Equals(left.Name, right.Name)
                 && object.Equals(left.GroupName, right.GroupName);
         }
 
-        public static bool operator !=(GameObjectBindInfo left, GameObjectBindInfo right)
+        public static bool operator !=(GameObjectCreationParameters left, GameObjectCreationParameters right)
         {
             return !left.Equals(right);
         }
     }
 }
 
+#endif

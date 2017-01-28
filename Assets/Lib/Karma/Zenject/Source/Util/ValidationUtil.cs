@@ -1,17 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Diagnostics;
 using ModestTree;
-using ModestTree.Util;
-
-#if !NOT_UNITY3D
-using UnityEngine.SceneManagement;
-using UnityEngine;
-#endif
 
 namespace Zenject
 {

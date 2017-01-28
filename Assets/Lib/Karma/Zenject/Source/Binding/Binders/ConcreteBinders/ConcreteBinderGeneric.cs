@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using ModestTree;
 using System.Linq;
 
-#if !NOT_UNITY3D
-using UnityEngine;
-#endif
-
 namespace Zenject
 {
     public class ConcreteBinderGeneric<TContract> : FromBinderGeneric<TContract>

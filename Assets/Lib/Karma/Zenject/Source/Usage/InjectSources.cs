@@ -1,6 +1,3 @@
-using ModestTree.Util;
-using System;
-
 namespace Zenject
 {
     public enum InjectSources

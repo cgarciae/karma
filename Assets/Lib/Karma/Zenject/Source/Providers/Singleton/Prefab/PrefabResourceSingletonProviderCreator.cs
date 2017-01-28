@@ -2,10 +2,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ModestTree;
 using UnityEngine;
-using Zenject.Internal;
 
 namespace Zenject
 {
@@ -25,8 +23,8 @@ namespace Zenject
         }
 
         public IProvider CreateProvider(
-            string resourcePath, Type resultType, string gameObjectName, string gameObjectGroupName,
-            List<TypeValuePair> extraArguments, string concreteIdentifier)
+            string resourcePath, Type resultType, GameObjectCreationParameters gameObjectBindInfo,
+            List<TypeValuePair> extraArguments, object concreteIdentifier)
         {
             IPrefabInstantiator creator;
 
@@ -41,18 +39,15 @@ namespace Zenject
                 Assert.That(creator.ExtraArguments.IsEmpty() && extraArguments.IsEmpty(),
                     "Ambiguous creation parameters (arguments) when using ToPrefabResource with AsSingle");
 
-                Assert.IsEqual(creator.GameObjectName, gameObjectName,
-                    "Ambiguous creation parameters (gameObjectName) when using ToPrefabResource with AsSingle");
-
-                Assert.IsEqual(creator.GameObjectGroupName, gameObjectGroupName,
-                    "Ambiguous creation parameters (gameObjectGroupName) when using ToPrefabResource with AsSingle");
+                Assert.IsEqual(creator.GameObjectCreationParameters, gameObjectBindInfo,
+                    "Ambiguous creation parameters (gameObject name/parent info) when using ToPrefabResource with AsSingle");
             }
             else
             {
                 creator = new PrefabInstantiatorCached(
                     new PrefabInstantiator(
-                        _container, gameObjectName,
-                        gameObjectGroupName, extraArguments,
+                        _container, gameObjectBindInfo,
+                        extraArguments,
                         new PrefabProviderResource(resourcePath)));
 
                 _prefabCreators.Add(prefabId, creator);
@@ -68,10 +63,10 @@ namespace Zenject
 
         class PrefabId : IEquatable<PrefabId>
         {
-            public readonly string ConcreteIdentifier;
+            public readonly object ConcreteIdentifier;
             public readonly string ResourcePath;
 
-            public PrefabId(string concreteIdentifier, string resourcePath)
+            public PrefabId(object concreteIdentifier, string resourcePath)
             {
                 Assert.IsNotNull(resourcePath);
 

@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using ModestTree;
-
 namespace Zenject
 {
     public class NonLazyBinder

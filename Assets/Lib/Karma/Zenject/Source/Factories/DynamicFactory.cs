@@ -38,8 +38,7 @@ namespace Zenject
             catch (Exception e)
             {
                 throw new ZenjectException(
-                    e, "Error during construction of type '{0}' via {1}.Create method!",
-                    typeof(TValue).Name(), this.GetType().Name());
+                    "Error during construction of type '{0}' via {1}.Create method!".Fmt(typeof(TValue).Name(), this.GetType().Name()), e);
             }
         }
 
@@ -53,7 +52,7 @@ namespace Zenject
             catch (Exception e)
             {
                 throw new ZenjectException(
-                    e, "Validation for factory '{0}' failed", this.GetType().Name());
+                    "Validation for factory '{0}' failed".Fmt(this.GetType().Name()), e);
             }
         }
 

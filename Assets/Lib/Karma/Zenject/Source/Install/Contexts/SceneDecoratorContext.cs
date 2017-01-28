@@ -1,104 +1,62 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
-using ModestTree.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Zenject
 {
-    [System.Diagnostics.DebuggerStepThrough]
-    public class SceneDecoratorContext : MonoBehaviour
+    public class SceneDecoratorContext : Context
     {
-        public string SceneName;
-
+        [FormerlySerializedAs("SceneName")]
         [SerializeField]
-        public DecoratorInstaller[] DecoratorInstallers;
+        string _decoratedContractName = null;
 
-        [SerializeField]
-        public MonoInstaller[] PreInstallers;
+        DiContainer _container;
 
-        [SerializeField]
-        public MonoInstaller[] PostInstallers;
-
-        public void Awake()
+        public string DecoratedContractName
         {
-            // We always want to initialize ProjectContext as early as possible
-            ProjectContext.Instance.EnsureIsInitialized();
-
-            SceneContext.BeforeInstallHooks += AddPreBindings;
-            SceneContext.AfterInstallHooks += AddPostBindings;
-
-            SceneContext.DecoratedScenes.Add(this.gameObject.scene);
-
-            if (ShouldLoadNextScene())
+            get
             {
-                SceneManager.LoadScene(SceneName, LoadSceneMode.Additive);
+                return _decoratedContractName;
             }
         }
 
-        bool ShouldLoadNextScene()
+        public override DiContainer Container
         {
-            // This is the only way I can figure out to do this
-            // We can't use GetSceneByName(SceneName).isLoaded since that doesn't work in Awake
-            return GetSceneIndex(this.gameObject.scene) == SceneManager.sceneCount - 1;
-        }
-
-        int GetSceneIndex(Scene scene)
-        {
-            for (int i = 0; i < SceneManager.sceneCount; i++)
+            get
             {
-                if (SceneManager.GetSceneAt(i) == scene)
-                {
-                    return i;
-                }
+                Assert.IsNotNull(_container);
+                return _container;
             }
-
-            throw Assert.CreateException();
         }
 
-        public void AddPreBindings(DiContainer container)
+        public void Initialize(DiContainer container)
         {
-            container.Install(PreInstallers);
+            Assert.IsNull(_container);
+            _container = container;
 
-            ProcessDecoratorInstallers(container, true);
+            container.LazyInstanceInjector
+                .AddInstances(GetInjectableComponents().Cast<object>());
         }
 
-        public void AddPostBindings(DiContainer container)
+        public void InstallDecoratorSceneBindings()
         {
-            container.Install(PostInstallers);
-
-            ProcessDecoratorInstallers(container, false);
+            _container.Bind<SceneDecoratorContext>().FromInstance(this);
+            InstallSceneBindings();
         }
 
-        void ProcessDecoratorInstallers(DiContainer container, bool isBefore)
+        public void InstallDecoratorInstallers()
         {
-            if (DecoratorInstallers == null)
-            {
-                return;
-            }
+            InstallInstallers();
+        }
 
-            foreach (var installer in DecoratorInstallers)
-            {
-                Assert.IsNotNull(installer, "Found null installer in SceneDecoratorContext");
-
-                if (installer.enabled)
-                {
-                    container.Inject(installer);
-
-                    if (isBefore)
-                    {
-                        installer.PreInstallBindings();
-                    }
-                    else
-                    {
-                        installer.PostInstallBindings();
-                    }
-                }
-            }
+        protected override IEnumerable<Component> GetInjectableComponents()
+        {
+            return ContextUtil.GetInjectableComponents(this.gameObject.scene);
         }
     }
 }

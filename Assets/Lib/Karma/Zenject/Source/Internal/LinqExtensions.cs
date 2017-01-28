@@ -2,11 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using ModestTree.Util;
 
 namespace ModestTree
 {
     public static class LinqExtensions
     {
+        public static void ForEach<T>(this IEnumerable<T> first, Action<T> action)
+        {
+            foreach(T t in first)
+            {
+                action(t);
+            }
+        }
+
         public static IEnumerable<T> Append<T>(this IEnumerable<T> first, T item)
         {
             foreach (T t in first)
@@ -278,10 +287,10 @@ namespace ModestTree
             }
         }
 
-        public static IEnumerable<ModestTree.Util.Tuple<A, B>> Zipper<A, B>(
+        public static IEnumerable<ValuePair<A, B>> Zipper<A, B>(
             this IEnumerable<A> seqA, IEnumerable<B> seqB)
         {
-            return seqA.Zipper<A, B, ModestTree.Util.Tuple<A, B>>(seqB, ModestTree.Util.Tuple.New);
+            return seqA.Zipper<A, B, ValuePair<A, B>>(seqB, ValuePair.New);
         }
     }
 }

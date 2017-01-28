@@ -1,6 +1,5 @@
 #if !NOT_UNITY3D
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
@@ -12,37 +11,26 @@ namespace Zenject
     {
         readonly IPrefabProvider _prefabProvider;
         readonly DiContainer _container;
-        readonly string _gameObjectName;
-        readonly string _gameObjectGroupName;
         readonly List<TypeValuePair> _extraArguments;
+        readonly GameObjectCreationParameters _gameObjectBindInfo;
 
         public PrefabInstantiator(
             DiContainer container,
-            string gameObjectName,
-            string gameObjectGroupName,
+            GameObjectCreationParameters gameObjectBindInfo,
             List<TypeValuePair> extraArguments,
             IPrefabProvider prefabProvider)
         {
             _prefabProvider = prefabProvider;
             _extraArguments = extraArguments;
             _container = container;
-            _gameObjectName = gameObjectName;
-            _gameObjectGroupName = gameObjectGroupName;
+            _gameObjectBindInfo = gameObjectBindInfo;
         }
 
-        public string GameObjectGroupName
+        public GameObjectCreationParameters GameObjectCreationParameters
         {
             get
             {
-                return _gameObjectGroupName;
-            }
-        }
-
-        public string GameObjectName
-        {
-            get
-            {
-                return _gameObjectName;
+                return _gameObjectBindInfo;
             }
         }
 
@@ -61,13 +49,8 @@ namespace Zenject
 
         public IEnumerator<GameObject> Instantiate(List<TypeValuePair> args)
         {
-            var gameObject = _container.CreateAndParentPrefab(GetPrefab(), _gameObjectGroupName);
+            var gameObject = _container.CreateAndParentPrefab(GetPrefab(), _gameObjectBindInfo);
             Assert.IsNotNull(gameObject);
-
-            if (_gameObjectName != null)
-            {
-                gameObject.name = _gameObjectName;
-            }
 
             // Return it before inject so we can do circular dependencies
             yield return gameObject;

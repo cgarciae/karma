@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ModestTree;
 
 #if !NOT_UNITY3D
@@ -103,13 +102,13 @@ namespace Zenject
 
         public GameObjectNameGroupNameBinder FromGameObject()
         {
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             if (ContractType == typeof(GameObject))
             {
                 SubFinalizer = CreateFinalizer(
                     (container) => new EmptyGameObjectProvider(
-                        container, gameObjectInfo.Name, gameObjectInfo.GroupName));
+                        container, gameObjectInfo));
             }
             else
             {
@@ -119,7 +118,7 @@ namespace Zenject
                 SubFinalizer = CreateFinalizer(
                     (container) => new AddToNewGameObjectComponentProvider(
                         container, ContractType, null,
-                        new List<TypeValuePair>(), gameObjectInfo.Name, gameObjectInfo.GroupName));
+                        new List<TypeValuePair>(), gameObjectInfo));
             }
 
             return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
@@ -143,14 +142,14 @@ namespace Zenject
         {
             BindingUtil.AssertIsValidPrefab(prefab);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             if (ContractType == typeof(GameObject))
             {
                 SubFinalizer = CreateFinalizer(
                     (container) => new PrefabGameObjectProvider(
                         new PrefabInstantiator(
-                            container, gameObjectInfo.Name, gameObjectInfo.GroupName,
+                            container, gameObjectInfo, 
                             new List<TypeValuePair>(), new PrefabProvider(prefab))));
             }
             else
@@ -161,7 +160,7 @@ namespace Zenject
                     (container) => new GetFromPrefabComponentProvider(
                         ContractType,
                         new PrefabInstantiator(
-                            container, gameObjectInfo.Name, gameObjectInfo.GroupName,
+                            container, gameObjectInfo, 
                             new List<TypeValuePair>(), new PrefabProvider(prefab))));
             }
 
@@ -172,14 +171,14 @@ namespace Zenject
         {
             BindingUtil.AssertIsValidResourcePath(resourcePath);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             if (ContractType == typeof(GameObject))
             {
                 SubFinalizer = CreateFinalizer(
                     (container) => new PrefabGameObjectProvider(
                         new PrefabInstantiator(
-                            container, gameObjectInfo.Name, gameObjectInfo.GroupName,
+                            container, gameObjectInfo, 
                             new List<TypeValuePair>(), new PrefabProviderResource(resourcePath))));
             }
             else
@@ -190,7 +189,7 @@ namespace Zenject
                     (container) => new GetFromPrefabComponentProvider(
                         ContractType,
                         new PrefabInstantiator(
-                            container, gameObjectInfo.Name, gameObjectInfo.GroupName,
+                            container, gameObjectInfo, 
                             new List<TypeValuePair>(), new PrefabProviderResource(resourcePath))));
             }
 

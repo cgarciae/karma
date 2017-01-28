@@ -2,11 +2,6 @@ using System;
 using System.Collections.Generic;
 using ModestTree;
 
-#if !NOT_UNITY3D
-using UnityEngine;
-#endif
-
-
 namespace Zenject
 {
     public class FactoryToChoiceBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TContract> : FactoryFromBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TContract>

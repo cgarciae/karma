@@ -1,9 +1,5 @@
 ﻿#if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using Zenject;
-using System.Linq;
 using ModestTree;
 using UnityEngine;
 
@@ -13,7 +9,7 @@ namespace Zenject
     // rather than from within the installers
 
     //No parameters
-    public class PrefabFactory<T> : IValidatable
+    public class PrefabFactory<T>
         //where T : Component
     {
         [Inject]
@@ -35,18 +31,13 @@ namespace Zenject
             return Create((GameObject)Resources.Load(prefabResourceName));
         }
 
-        public void Validate()
-        {
-            if (!typeof(T).IsAbstract())
-            {
-                _container.InjectExplicit(
-                    new ValidationMarker(typeof(T)), ValidationUtil.CreateDefaultArgs());
-            }
-        }
+        // Note: We can't really validate here without access to the prefab
+        // We could validate the class directly with the current container but that fails when the
+        // class is inside a GameObjectContext
     }
 
     // One parameter
-    public class PrefabFactory<P1, T> : IValidatable
+    public class PrefabFactory<P1, T>
         //where T : Component
     {
         [Inject]
@@ -68,20 +59,10 @@ namespace Zenject
 
             return Create((GameObject)Resources.Load(prefabResourceName), param);
         }
-
-        public void Validate()
-        {
-            // If it's abstract, we can't check that the params are used
-            if (!typeof(T).IsAbstract())
-            {
-                _container.InjectExplicit(
-                    new ValidationMarker(typeof(T)), ValidationUtil.CreateDefaultArgs(typeof(P1)));
-            }
-        }
     }
 
     // Two parameters
-    public class PrefabFactory<P1, P2, T> : IValidatable
+    public class PrefabFactory<P1, P2, T>
         //where T : Component
     {
         [Inject]
@@ -103,20 +84,10 @@ namespace Zenject
 
             return Create((GameObject)Resources.Load(prefabResourceName), param, param2);
         }
-
-        public void Validate()
-        {
-            // If it's abstract, we can't check that the params are used
-            if (!typeof(T).IsAbstract())
-            {
-                _container.InjectExplicit(
-                    new ValidationMarker(typeof(T)), ValidationUtil.CreateDefaultArgs(typeof(P1), typeof(P2)));
-            }
-        }
     }
 
     // Three parameters
-    public class PrefabFactory<P1, P2, P3, T> : IValidatable
+    public class PrefabFactory<P1, P2, P3, T>
         //where T : Component
     {
         [Inject]
@@ -138,21 +109,10 @@ namespace Zenject
 
             return Create((GameObject)Resources.Load(prefabResourceName), param, param2, param3);
         }
-
-        public void Validate()
-        {
-            // If it's abstract, we can't check that the params are used
-            if (!typeof(T).IsAbstract())
-            {
-                _container.InjectExplicit(
-                    new ValidationMarker(typeof(T)),
-                    ValidationUtil.CreateDefaultArgs(typeof(P1), typeof(P2), typeof(P3)));
-            }
-        }
     }
 
     // Four parameters
-    public class PrefabFactory<P1, P2, P3, P4, T> : IValidatable
+    public class PrefabFactory<P1, P2, P3, P4, T>
         //where T : Component
     {
         [Inject]
@@ -173,17 +133,6 @@ namespace Zenject
               "Null or empty prefab resource name given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
             return Create((GameObject)Resources.Load(prefabResourceName), param, param2, param3, param4);
-        }
-
-        public void Validate()
-        {
-            // If it's abstract, we can't check that the params are used
-            if (!typeof(T).IsAbstract())
-            {
-                _container.InjectExplicit(
-                    new ValidationMarker(typeof(T)),
-                    ValidationUtil.CreateDefaultArgs(typeof(P1), typeof(P2), typeof(P3), typeof(P4)));
-            }
         }
     }
 }

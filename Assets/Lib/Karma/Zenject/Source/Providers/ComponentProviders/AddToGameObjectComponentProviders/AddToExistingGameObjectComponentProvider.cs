@@ -2,9 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using Zenject;
 
 namespace Zenject
 {
@@ -14,7 +12,7 @@ namespace Zenject
 
         public AddToExistingGameObjectComponentProvider(
             GameObject gameObject, DiContainer container, Type componentType,
-            string concreteIdentifier, List<TypeValuePair> extraArguments)
+            object concreteIdentifier, List<TypeValuePair> extraArguments)
             : base(container, componentType, concreteIdentifier, extraArguments)
         {
             _gameObject = gameObject;

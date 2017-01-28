@@ -1,6 +1,4 @@
-using System;
-using System.Linq;
-using ModestTree;
+#if !NOT_UNITY3D
 
 namespace Zenject
 {
@@ -8,7 +6,7 @@ namespace Zenject
     {
         public GameObjectNameGroupNameScopeBinder(
             BindInfo bindInfo,
-            GameObjectBindInfo gameObjectInfo)
+            GameObjectCreationParameters gameObjectInfo)
             : base(bindInfo, gameObjectInfo)
         {
         }
@@ -20,3 +18,5 @@ namespace Zenject
         }
     }
 }
+
+#endif

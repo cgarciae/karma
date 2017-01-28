@@ -40,7 +40,7 @@ namespace Zenject
             BindingUtil.AssertInstanceDerivesFromOrEqual(instance, AllParentTypes);
 
             SubFinalizer = CreateFinalizer(
-                (container) => new InstanceProvider(ContractType, instance));
+                (container) => new InstanceProvider(container, ContractType, instance));
 
             return this;
         }

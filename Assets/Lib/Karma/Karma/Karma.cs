@@ -86,7 +86,7 @@ namespace Karma {
         public virtual RectTransform rootUI { get { return this.transform.RectTransform(); } }
 
         private Dictionary<string, Channel> channelMap = new Dictionary<string, Channel>();
-        private List<Tuple<MVCPresenter, string, Action<object>>> registrations = new List<Tuple<MVCPresenter, string, Action<object>>>();
+        private List<ValueTriplet<MVCPresenter, string, Action<object>>> registrations = new List<ValueTriplet<MVCPresenter, string, Action<object>>>();
 
         public void Load(IEnumerable e)
         {
@@ -99,11 +99,11 @@ namespace Karma {
         {
             OnPresenterDestroy();
 
-            registrations.ForEach(tuple => 
+            registrations.ForEach(ValueTriplet => 
             {
-                var presenter = tuple.First;
-                var topic = tuple.Second;
-                var callback = tuple.Third;
+                var presenter = ValueTriplet.First;
+                var topic = ValueTriplet.Second;
+                var callback = ValueTriplet.Third;
 
                 //print("Unregistering " + name + "  from " + topic + " on " + presenter.name);
 
@@ -149,7 +149,7 @@ namespace Karma {
             presenter.Subscribe(topic, callback);
 
             registrations
-                .Add(Tuple.New(presenter, topic, callback));
+                .Add(ValueTriplet.New(presenter, topic, callback));
         }
 
         private void Broadcast(string topic, object msg)

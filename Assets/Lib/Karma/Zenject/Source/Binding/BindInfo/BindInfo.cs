@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
 
 namespace Zenject
 {
@@ -33,7 +31,7 @@ namespace Zenject
             ToTypes = new List<Type>();
             Arguments = new List<TypeValuePair>();
             ToChoice = ToChoices.Self;
-            InheritInSubContainers = false;
+            CopyIntoAllSubContainers = false;
             NonLazy = false;
             Scope = ScopeTypes.Transient;
             InvalidBindResponse = InvalidBindResponses.Assert;
@@ -61,7 +59,7 @@ namespace Zenject
             set;
         }
 
-        public bool InheritInSubContainers
+        public bool CopyIntoAllSubContainers
         {
             get;
             set;
@@ -105,7 +103,7 @@ namespace Zenject
         }
 
         // Note: This only makes sense for ScopeTypes.Singleton
-        public string ConcreteIdentifier
+        public object ConcreteIdentifier
         {
             get;
             set;

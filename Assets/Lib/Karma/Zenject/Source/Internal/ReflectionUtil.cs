@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 #if !NOT_UNITY3D
 using UnityEngine;
@@ -41,7 +39,7 @@ namespace ModestTree.Util
             {
                 if (obj != null)
                 {
-                    Assert.That(elementType.IsAssignableFrom(obj.GetType()),
+                    Assert.That(obj.GetType().DerivesFromOrEqual(elementType),
                         "Wrong type when creating generic list, expected something assignable from '"+ elementType +"', but found '" + obj.GetType() + "'");
                 }
 

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ModestTree;
-using Zenject.Internal;
 
 namespace Zenject
 {
@@ -22,7 +20,7 @@ namespace Zenject
         }
 
         public IProvider CreateProvider(
-            Type resultType, string concreteIdentifier,
+            Type resultType, object concreteIdentifier,
             Action<DiContainer> installMethod, object identifier)
         {
             _markRegistry.MarkSingleton(
@@ -49,10 +47,10 @@ namespace Zenject
 
         class MethodSingletonId : IEquatable<MethodSingletonId>
         {
-            public readonly string ConcreteIdentifier;
+            public readonly object ConcreteIdentifier;
             public readonly Delegate InstallerDelegate;
 
-            public MethodSingletonId(string concreteIdentifier, Delegate installerMethod)
+            public MethodSingletonId(object concreteIdentifier, Delegate installerMethod)
             {
                 ConcreteIdentifier = concreteIdentifier;
                 InstallerDelegate = installerMethod;
@@ -64,7 +62,10 @@ namespace Zenject
                 {
                     int hash = 17;
                     hash = hash * 29 + (this.ConcreteIdentifier == null ? 0 : this.ConcreteIdentifier.GetHashCode());
-                    hash = hash * 29 + this.InstallerDelegate.Target.GetHashCode();
+
+                    var delegateTarget = this.InstallerDelegate.Target;
+
+                    hash = hash * 29 + (delegateTarget == null ? 0 : delegateTarget.GetHashCode());
                     hash = hash * 29 + this.InstallerDelegate.Method().GetHashCode();
                     return hash;
                 }

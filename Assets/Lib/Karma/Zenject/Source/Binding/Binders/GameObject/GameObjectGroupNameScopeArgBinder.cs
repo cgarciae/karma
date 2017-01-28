@@ -1,29 +1,43 @@
-using System;
-using System.Linq;
-using ModestTree;
+#if !NOT_UNITY3D
 
+using System;
+using UnityEngine;
 namespace Zenject
 {
     public class GameObjectGroupNameScopeArgBinder : ScopeArgBinder
     {
         public GameObjectGroupNameScopeArgBinder(
             BindInfo bindInfo,
-            GameObjectBindInfo gameObjectInfo)
+            GameObjectCreationParameters gameObjectInfo)
             : base(bindInfo)
         {
             GameObjectInfo = gameObjectInfo;
         }
 
-        protected GameObjectBindInfo GameObjectInfo
+        protected GameObjectCreationParameters GameObjectInfo
         {
             get;
             private set;
         }
 
-        public ScopeArgBinder UnderGameObjectGroup(string gameObjectGroupName)
+        public ScopeArgBinder UnderTransform(Transform parent)
         {
-            GameObjectInfo.GroupName = gameObjectGroupName;
+            GameObjectInfo.ParentTransform = parent;
+            return this;
+        }
+
+        public ScopeArgBinder UnderTransform(Func<DiContainer, Transform> parentGetter)
+        {
+            GameObjectInfo.ParentTransformGetter = parentGetter;
+            return this;
+        }
+
+        public ScopeArgBinder UnderTransformGroup(string transformGroupname)
+        {
+            GameObjectInfo.GroupName = transformGroupname;
             return this;
         }
     }
 }
+
+#endif

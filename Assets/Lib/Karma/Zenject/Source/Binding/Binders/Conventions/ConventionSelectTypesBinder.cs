@@ -1,11 +1,5 @@
 #if !(UNITY_WSA && ENABLE_DOTNET)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ModestTree;
-
 namespace Zenject
 {
     public class ConventionSelectTypesBinder

@@ -92,6 +92,19 @@ namespace Zenject
                 BindInfo, FinalizerWrapper, subIdentifier);
         }
 
+        public ScopeArgBinder FromFactory(Type factoryType)
+        {
+            Assert.That(factoryType.DerivesFrom<IFactory>());
+
+            SubFinalizer = new ScopableBindingFinalizer(
+                BindInfo,
+                SingletonTypes.ToFactory, factoryType,
+                (container, type) => new UntypedFactoryProvider(
+                    factoryType, container, BindInfo.Arguments));
+
+            return new ScopeArgBinder(BindInfo);
+        }
+
 #if !NOT_UNITY3D
 
         public ScopeArgBinder FromComponent(GameObject gameObject)
@@ -108,12 +121,24 @@ namespace Zenject
             return new ScopeArgBinder(BindInfo);
         }
 
+        public ArgumentsBinder FromSiblingComponent()
+        {
+            BindingUtil.AssertIsComponent(ConcreteTypes);
+            BindingUtil.AssertTypesAreNotAbstract(ConcreteTypes);
+
+            SubFinalizer = new SingleProviderBindingFinalizer(
+                BindInfo, (container, type) => new AddToCurrentGameObjectComponentProvider(
+                    container, type, BindInfo.ConcreteIdentifier, BindInfo.Arguments));
+
+            return new ArgumentsBinder(BindInfo);
+        }
+
         public GameObjectNameGroupNameScopeArgBinder FromGameObject()
         {
             BindingUtil.AssertIsAbstractOrComponentOrGameObject(BindInfo.ContractTypes);
             BindingUtil.AssertIsComponentOrGameObject(ConcreteTypes);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             if (ConcreteTypes.All(x => x == typeof(GameObject)))
             {
@@ -123,7 +148,7 @@ namespace Zenject
                     {
                         Assert.That(BindInfo.Arguments.IsEmpty(), "Cannot inject arguments into empty game object");
                         return new EmptyGameObjectProvider(
-                            container, gameObjectInfo.Name, gameObjectInfo.GroupName);
+                            container, gameObjectInfo);
                     });
             }
             else
@@ -138,8 +163,7 @@ namespace Zenject
                         type,
                         BindInfo.ConcreteIdentifier,
                         BindInfo.Arguments,
-                        gameObjectInfo.Name,
-                        gameObjectInfo.GroupName));
+                        gameObjectInfo));
             }
 
             return new GameObjectNameGroupNameScopeArgBinder(BindInfo, gameObjectInfo);
@@ -150,7 +174,7 @@ namespace Zenject
             BindingUtil.AssertIsValidPrefab(prefab);
             BindingUtil.AssertIsAbstractOrComponentOrGameObject(AllParentTypes);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             SubFinalizer = new PrefabBindingFinalizer(
                 BindInfo, gameObjectInfo, prefab);
@@ -163,7 +187,7 @@ namespace Zenject
             BindingUtil.AssertIsValidResourcePath(resourcePath);
             BindingUtil.AssertIsAbstractOrComponentOrGameObject(AllParentTypes);
 
-            var gameObjectInfo = new GameObjectBindInfo();
+            var gameObjectInfo = new GameObjectCreationParameters();
 
             SubFinalizer = new PrefabResourceBindingFinalizer(
                 BindInfo, gameObjectInfo, resourcePath);
@@ -186,6 +210,16 @@ namespace Zenject
 
 #endif
 
+        public ScopeArgBinder FromMethod(Func<InjectContext, object> method)
+        {
+            SubFinalizer = new ScopableBindingFinalizer(
+                BindInfo,
+                SingletonTypes.ToMethod, new SingletonImplIds.ToMethod(method),
+                (container, type) => new MethodProviderUntyped(method, container));
+
+            return this;
+        }
+
         protected ScopeArgBinder FromMethodBase<TConcrete>(Func<InjectContext, TConcrete> method)
         {
             BindingUtil.AssertIsDerivedFromTypes(typeof(TConcrete), AllParentTypes);
@@ -198,7 +232,7 @@ namespace Zenject
             return this;
         }
 
-        protected ScopeBinder FromFactoryBase<TConcrete, TFactory>()
+        protected ScopeArgBinder FromFactoryBase<TConcrete, TFactory>()
             where TFactory : IFactory<TConcrete>
         {
             BindingUtil.AssertIsDerivedFromTypes(typeof(TConcrete), AllParentTypes);
@@ -206,9 +240,9 @@ namespace Zenject
             SubFinalizer = new ScopableBindingFinalizer(
                 BindInfo,
                 SingletonTypes.ToFactory, typeof(TFactory),
-                (container, type) => new FactoryProvider<TConcrete, TFactory>(container, new List<TypeValuePair>()));
+                (container, type) => new FactoryProvider<TConcrete, TFactory>(container, BindInfo.Arguments));
 
-            return new ScopeBinder(BindInfo);
+            return new ScopeArgBinder(BindInfo);
         }
 
         protected ScopeBinder FromResolveGetterBase<TObj, TResult>(
@@ -238,7 +272,7 @@ namespace Zenject
 
             SubFinalizer = new ScopableBindingFinalizer(
                 BindInfo, SingletonTypes.ToInstance, instance,
-                (_, type) => new InstanceProvider(type, instance));
+                (container, type) => new InstanceProvider(container, type, instance));
 
             return new ScopeBinder(BindInfo);
         }
