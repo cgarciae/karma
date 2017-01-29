@@ -301,8 +301,8 @@ namespace Atoms {
                 KeepDoing(Nothing);
 
             return SimpleStateMachine(stopCond,
-                Tuple.New(cond, whenTrue),
-                Tuple.New(Not(cond), whenFalse)
+                ValuePair.New(cond, whenTrue),
+                ValuePair.New(Not(cond), whenFalse)
             );
         }
 
@@ -324,7 +324,7 @@ namespace Atoms {
             return e.Then(When(cond, whenTrue, whenFalse, stopCond));
         }
 
-        public static IEnumerable SimpleStateMachine(Func<bool> stopCond, params Tuple<Func<bool>, IEnumerable>[] states)
+        public static IEnumerable SimpleStateMachine(Func<bool> stopCond, params ValuePair<Func<bool>, IEnumerable>[] states)
         {
             var enums = states.Select(s => new
             {
@@ -349,7 +349,7 @@ namespace Atoms {
             }
         }
 
-        public static IEnumerable SimpleStateMachine(params Tuple<Func<bool>, IEnumerable>[] states)
+        public static IEnumerable SimpleStateMachine(params ValuePair<Func<bool>, IEnumerable>[] states)
         {
             return SimpleStateMachine(null, states);
         }
