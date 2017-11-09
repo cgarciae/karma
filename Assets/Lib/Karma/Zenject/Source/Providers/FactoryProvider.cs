@@ -8,6 +8,7 @@ namespace Zenject
         where TFactory : IFactory
     {
         readonly List<TypeValuePair> _factoryArgs;
+        object _factory;
 
         public FactoryProviderBase(DiContainer container, List<TypeValuePair> factoryArgs)
         {
@@ -31,7 +32,12 @@ namespace Zenject
 
         protected object CreateFactory()
         {
-            return Container.InstantiateExplicit(typeof(TFactory), _factoryArgs);
+            if (_factory == null)
+            {
+                _factory = Container.InstantiateExplicit(typeof(TFactory), _factoryArgs);
+            }
+
+            return _factory;
         }
     }
 

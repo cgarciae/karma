@@ -23,7 +23,7 @@ namespace Zenject
         {
             _markRegistry.MarkSingleton(
                 resultType, concreteIdentifier,
-                SingletonTypes.ToSubContainerInstaller);
+                SingletonTypes.FromSubContainerInstaller);
 
             var subContainerSingletonId = new InstallerSingletonId(
                 concreteIdentifier, installerType);

@@ -19,7 +19,7 @@ namespace Zenject
             _container = container;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args)
+        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context)
         {
             Assert.IsEmpty(args);
 
@@ -28,6 +28,15 @@ namespace Zenject
             _installMethod(subContainer);
 
             subContainer.ResolveDependencyRoots();
+            subContainer.FlushInjectQueue();
+
+            if (subContainer.IsValidating)
+            {
+                // The root-level Container has its ValidateValidatables method
+                // called explicitly - however, this is not so for sub-containers
+                // so call it here instead
+                subContainer.ValidateValidatables();
+            }
 
             return subContainer;
         }
@@ -48,7 +57,7 @@ namespace Zenject
             _container = container;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args)
+        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context)
         {
             Assert.IsEqual(args.Count, 1);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -58,6 +67,15 @@ namespace Zenject
             _installMethod(subContainer, (TParam1)args[0].Value);
 
             subContainer.ResolveDependencyRoots();
+            subContainer.FlushInjectQueue();
+
+            if (subContainer.IsValidating)
+            {
+                // The root-level Container has its ValidateValidatables method
+                // called explicitly - however, this is not so for sub-containers
+                // so call it here instead
+                subContainer.ValidateValidatables();
+            }
 
             return subContainer;
         }
@@ -78,7 +96,7 @@ namespace Zenject
             _container = container;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args)
+        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context)
         {
             Assert.IsEqual(args.Count, 2);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -92,6 +110,15 @@ namespace Zenject
                 (TParam2)args[1].Value);
 
             subContainer.ResolveDependencyRoots();
+            subContainer.FlushInjectQueue();
+
+            if (subContainer.IsValidating)
+            {
+                // The root-level Container has its ValidateValidatables method
+                // called explicitly - however, this is not so for sub-containers
+                // so call it here instead
+                subContainer.ValidateValidatables();
+            }
 
             return subContainer;
         }
@@ -112,7 +139,7 @@ namespace Zenject
             _container = container;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args)
+        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context)
         {
             Assert.IsEqual(args.Count, 3);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -128,6 +155,15 @@ namespace Zenject
                 (TParam3)args[2].Value);
 
             subContainer.ResolveDependencyRoots();
+            subContainer.FlushInjectQueue();
+
+            if (subContainer.IsValidating)
+            {
+                // The root-level Container has its ValidateValidatables method
+                // called explicitly - however, this is not so for sub-containers
+                // so call it here instead
+                subContainer.ValidateValidatables();
+            }
 
             return subContainer;
         }
@@ -148,7 +184,7 @@ namespace Zenject
             _container = container;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args)
+        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context)
         {
             Assert.IsEqual(args.Count, 4);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -166,6 +202,15 @@ namespace Zenject
                 (TParam4)args[3].Value);
 
             subContainer.ResolveDependencyRoots();
+            subContainer.FlushInjectQueue();
+
+            if (subContainer.IsValidating)
+            {
+                // The root-level Container has its ValidateValidatables method
+                // called explicitly - however, this is not so for sub-containers
+                // so call it here instead
+                subContainer.ValidateValidatables();
+            }
 
             return subContainer;
         }
@@ -186,7 +231,7 @@ namespace Zenject
             _container = container;
         }
 
-        public DiContainer CreateSubContainer(List<TypeValuePair> args)
+        public DiContainer CreateSubContainer(List<TypeValuePair> args, InjectContext context)
         {
             Assert.IsEqual(args.Count, 5);
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
@@ -206,6 +251,15 @@ namespace Zenject
                 (TParam5)args[4].Value);
 
             subContainer.ResolveDependencyRoots();
+            subContainer.FlushInjectQueue();
+
+            if (subContainer.IsValidating)
+            {
+                // The root-level Container has its ValidateValidatables method
+                // called explicitly - however, this is not so for sub-containers
+                // so call it here instead
+                subContainer.ValidateValidatables();
+            }
 
             return subContainer;
         }

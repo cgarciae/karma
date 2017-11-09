@@ -32,7 +32,7 @@ namespace Zenject
 
         void FinalizeBindingConcrete(DiContainer container, List<Type> concreteTypes)
         {
-            switch (BindInfo.Scope)
+            switch (GetScope())
             {
                 case ScopeTypes.Singleton:
                 {
@@ -80,7 +80,7 @@ namespace Zenject
 
         void FinalizeBindingSelf(DiContainer container)
         {
-            switch (BindInfo.Scope)
+            switch (GetScope())
             {
                 case ScopeTypes.Singleton:
                 {

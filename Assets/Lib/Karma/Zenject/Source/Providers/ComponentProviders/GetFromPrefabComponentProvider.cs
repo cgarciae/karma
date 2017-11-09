@@ -38,7 +38,10 @@ namespace Zenject
 
             var gameObject = gameObjectRunner.Current;
 
-            var allComponents = gameObject.GetComponentsInChildren(_componentType);
+            // NOTE: Need to set includeInactive to true here, because prefabs are always
+            // instantiated as disabled until injection occurs, so that Awake / OnEnabled is executed
+            // after injection has occurred
+            var allComponents = gameObject.GetComponentsInChildren(_componentType, true);
 
             Assert.That(allComponents.Length >= 1,
                 "Expected to find at least one component with type '{0}' on prefab '{1}'",

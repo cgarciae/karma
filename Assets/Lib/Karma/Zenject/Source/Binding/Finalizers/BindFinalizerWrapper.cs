@@ -8,18 +8,12 @@ namespace Zenject
 
         public IBindingFinalizer SubFinalizer
         {
-            set
-            {
-                _subFinalizer = value;
-            }
+            set { _subFinalizer = value; }
         }
 
         public bool CopyIntoAllSubContainers
         {
-            get
-            {
-                return _subFinalizer.CopyIntoAllSubContainers;
-            }
+            get { return _subFinalizer.CopyIntoAllSubContainers; }
         }
 
         public void FinalizeBinding(DiContainer container)

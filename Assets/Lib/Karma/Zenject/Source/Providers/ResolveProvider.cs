@@ -11,14 +11,17 @@ namespace Zenject
         readonly DiContainer _container;
         readonly Type _contractType;
         readonly bool _isOptional;
+        readonly InjectSources _source;
 
         public ResolveProvider(
-            Type contractType, DiContainer container, object identifier, bool isOptional)
+            Type contractType, DiContainer container, object identifier,
+            bool isOptional, InjectSources source)
         {
             _contractType = contractType;
             _identifier = identifier;
             _container = container;
             _isOptional = isOptional;
+            _source = source;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -40,7 +43,7 @@ namespace Zenject
         {
             var subContext = parent.CreateSubContext(_contractType, _identifier);
 
-            subContext.SourceType = InjectSources.Any;
+            subContext.SourceType = _source;
             subContext.Optional = _isOptional;
 
             return subContext;

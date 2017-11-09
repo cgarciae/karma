@@ -222,7 +222,7 @@ namespace RSG.Utils
         /// <summary>
         /// Performance an action if the source is an empty sequence.
         /// </summary>
-        public static IEnumerable<T> WhenEmpty<T>(this IEnumerable<T> source, Action action)
+        public static IEnumerable<T> WhenEmpty<T>(this IEnumerable<T> source, System.Action action)
         {
             if (!source.Any())
             {
@@ -265,7 +265,7 @@ namespace RSG.Utils
         /// <summary>
         /// Invokes an action when the source contains no items.
         /// </summary>
-        public static IEnumerable<T> WhereNone<T>(this IEnumerable<T> source, Action action)
+        public static IEnumerable<T> WhereNone<T>(this IEnumerable<T> source, System.Action action)
         {
             if (!source.Any())
             {
@@ -278,7 +278,7 @@ namespace RSG.Utils
         /// <summary>
         /// Invokes an action when the source contains more than 1 item.
         /// </summary>
-        public static IEnumerable<T> WhereMultiple<T>(this IEnumerable<T> source, Action action)
+        public static IEnumerable<T> WhereMultiple<T>(this IEnumerable<T> source, System.Action action)
         {
             if (source.Skip(1).Any())
             {

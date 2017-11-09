@@ -12,18 +12,12 @@ namespace Zenject
 
         protected DiContainer Container
         {
-            get
-            {
-                return _container;
-            }
+            get { return _container; }
         }
 
         public virtual bool IsEnabled
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         public abstract void InstallBindings();

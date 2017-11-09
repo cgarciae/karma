@@ -27,7 +27,7 @@ namespace Zenject
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);
 
-            if (_container.IsValidating)
+            if (_container.IsValidating && !DiContainer.CanCreateOrInjectDuringValidation(context.MemberType))
             {
                 yield return new List<object>() { new ValidationMarker(context.MemberType) };
             }

@@ -44,7 +44,7 @@ namespace Zenject
         {
             Assert.IsNotNull(context);
 
-            var subContainer = _subContainerCreator.CreateSubContainer(args);
+            var subContainer = _subContainerCreator.CreateSubContainer(args, context);
 
             var subContext = CreateSubContext(context, subContainer);
 

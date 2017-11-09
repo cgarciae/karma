@@ -25,11 +25,25 @@ namespace Zenject
             set;
         }
 
-        public Func<DiContainer, Transform> ParentTransformGetter
+        public Func<InjectContext, Transform> ParentTransformGetter
         {
             get;
             set;
         }
+
+        public Vector3? Position
+        {
+            get;
+            set;
+        }
+
+        public Quaternion? Rotation
+        {
+            get;
+            set;
+        }
+
+        public static readonly GameObjectCreationParameters Default = new GameObjectCreationParameters();
 
         public override int GetHashCode()
         {
@@ -40,6 +54,8 @@ namespace Zenject
                 hash = hash * 29 + (this.GroupName == null ? 0 : this.GroupName.GetHashCode());
                 hash = hash * 29 + (this.ParentTransform == null ? 0 : this.ParentTransform.GetHashCode());
                 hash = hash * 29 + (this.ParentTransformGetter == null ? 0 : this.ParentTransformGetter.GetHashCode());
+                hash = hash * 29 + (!this.Position.HasValue ? 0 : this.Position.Value.GetHashCode());
+                hash = hash * 29 + (!this.Rotation.HasValue ? 0 : this.Rotation.Value.GetHashCode());
                 return hash;
             }
         }

@@ -19,18 +19,12 @@ namespace Zenject
 
         public MethodInfo MethodInfo
         {
-            get
-            {
-                return _methodInfo;
-            }
+            get { return _methodInfo; }
         }
 
         public IEnumerable<InjectableInfo> InjectableInfo
         {
-            get
-            {
-                return _injectableInfo;
-            }
+            get { return _injectableInfo; }
         }
     }
 
@@ -61,59 +55,42 @@ namespace Zenject
 
         public Type Type
         {
-            get
-            {
-                return _typeAnalyzed;
-            }
+            get { return _typeAnalyzed; }
         }
 
         public IEnumerable<PostInjectableInfo> PostInjectMethods
         {
-            get
-            {
-                return _postInjectMethods;
-            }
+            get { return _postInjectMethods; }
         }
 
         public IEnumerable<InjectableInfo> AllInjectables
         {
             get
             {
-                return _constructorInjectables.Concat(_fieldInjectables).Concat(_propertyInjectables).Concat(_postInjectMethods.SelectMany(x => x.InjectableInfo));
+                return _constructorInjectables.Concat(_fieldInjectables).Concat(_propertyInjectables)
+                    .Concat(_postInjectMethods.SelectMany(x => x.InjectableInfo));
             }
         }
 
         public IEnumerable<InjectableInfo> FieldInjectables
         {
-            get
-            {
-                return _fieldInjectables;
-            }
+            get { return _fieldInjectables; }
         }
 
         public IEnumerable<InjectableInfo> PropertyInjectables
         {
-            get
-            {
-                return _propertyInjectables;
-            }
+            get { return _propertyInjectables; }
         }
 
         public IEnumerable<InjectableInfo> ConstructorInjectables
         {
-            get
-            {
-                return _constructorInjectables;
-            }
+            get { return _constructorInjectables; }
         }
 
         // May be null
         public ConstructorInfo InjectConstructor
         {
-            get
-            {
-                return _injectConstructor;
-            }
+            get { return _injectConstructor; }
         }
     }
 }

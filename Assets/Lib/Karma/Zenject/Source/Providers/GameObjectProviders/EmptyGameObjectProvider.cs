@@ -31,7 +31,7 @@ namespace Zenject
 
             yield return new List<object>()
             {
-                _container.CreateEmptyGameObject(_gameObjectBindInfo)
+                _container.CreateEmptyGameObject(_gameObjectBindInfo, context)
             };
         }
     }

@@ -8,14 +8,14 @@ namespace Zenject
     {
         readonly object _instance;
         readonly Type _instanceType;
-        readonly LazyInstanceInjector _lazyInjector;
+        readonly DiContainer _container;
 
         public InstanceProvider(
-            DiContainer container, Type instanceType, object instance)
+            Type instanceType, object instance, DiContainer container)
         {
             _instanceType = instanceType;
             _instance = instance;
-            _lazyInjector = container.LazyInstanceInjector;
+            _container = container;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -30,9 +30,9 @@ namespace Zenject
 
             Assert.That(_instanceType.DerivesFromOrEqual(context.MemberType));
 
-            _lazyInjector.OnInstanceResolved(_instance);
-
             yield return new List<object>() { _instance };
+
+            _container.OnInstanceResolved(_instance);
         }
     }
 }

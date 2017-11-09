@@ -17,18 +17,12 @@ namespace Zenject
 
         protected DiContainer Container
         {
-            get
-            {
-                return _container;
-            }
+            get { return _container; }
         }
 
         bool IInstaller.IsEnabled
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         public virtual void InstallBindings()

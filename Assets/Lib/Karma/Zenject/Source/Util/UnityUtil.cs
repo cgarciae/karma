@@ -3,49 +3,51 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace ModestTree.Util
 {
     public static class UnityUtil
     {
-        public static bool IsAltKeyDown
+        public static IEnumerable<Scene> AllScenes
         {
             get
             {
-                return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
+                for (int i = 0; i < SceneManager.sceneCount; i++)
+                {
+                    yield return SceneManager.GetSceneAt(i);
+                }
             }
+        }
+
+        public static IEnumerable<Scene> AllLoadedScenes
+        {
+            get { return AllScenes.Where(scene => scene.isLoaded); }
+        }
+
+        public static bool IsAltKeyDown
+        {
+            get { return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt); }
         }
 
         public static bool IsControlKeyDown
         {
-            get
-            {
-                return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-            }
+            get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl); }
         }
 
         public static bool IsShiftKeyDown
         {
-            get
-            {
-                return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-            }
+            get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); }
         }
 
         public static bool WasShiftKeyJustPressed
         {
-            get
-            {
-                return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
-            }
+            get { return Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift); }
         }
 
         public static bool WasAltKeyJustPressed
         {
-            get
-            {
-                return Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt);
-            }
+            get { return Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt); }
         }
 
         public static int GetDepthLevel(Transform transform)
@@ -123,14 +125,14 @@ namespace ModestTree.Util
             }
         }
 
-        public static IEnumerable<GameObject> GetAllGameObjectsInScene()
+        public static IEnumerable<GameObject> GetAllGameObjects()
         {
             return GameObject.FindObjectsOfType<Transform>().Select(x => x.gameObject);
         }
 
-        public static List<GameObject> GetRootGameObjects()
+        public static List<GameObject> GetAllRootGameObjects()
         {
-            return GetAllGameObjectsInScene().Where(x => x.transform.parent == null).ToList();
+            return GetAllGameObjects().Where(x => x.transform.parent == null).ToList();
         }
     }
 }

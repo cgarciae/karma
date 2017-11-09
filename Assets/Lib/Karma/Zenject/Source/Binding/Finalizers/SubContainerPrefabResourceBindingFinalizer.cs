@@ -39,7 +39,7 @@ namespace Zenject
 
         void FinalizeBindingConcrete(DiContainer container, List<Type> concreteTypes)
         {
-            switch (BindInfo.Scope)
+            switch (GetScope())
             {
                 case ScopeTypes.Singleton:
                 {
@@ -61,14 +61,14 @@ namespace Zenject
                         concreteTypes,
                         (_, concreteType) => new SubContainerDependencyProvider(
                             concreteType, _subIdentifier,
-                            new SubContainerCreatorByPrefab(
+                            new SubContainerCreatorByNewPrefab(
                                 container, new PrefabProviderResource(_resourcePath), _gameObjectBindInfo)));
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
                     var containerCreator = new SubContainerCreatorCached(
-                        new SubContainerCreatorByPrefab(container, new PrefabProviderResource(_resourcePath), _gameObjectBindInfo));
+                        new SubContainerCreatorByNewPrefab(container, new PrefabProviderResource(_resourcePath), _gameObjectBindInfo));
 
                     RegisterProvidersForAllContractsPerConcreteType(
                         container,
@@ -87,7 +87,7 @@ namespace Zenject
 
         void FinalizeBindingSelf(DiContainer container)
         {
-            switch (BindInfo.Scope)
+            switch (GetScope())
             {
                 case ScopeTypes.Singleton:
                 {
@@ -107,14 +107,14 @@ namespace Zenject
                         container,
                         (_, contractType) => new SubContainerDependencyProvider(
                             contractType, _subIdentifier,
-                            new SubContainerCreatorByPrefab(
+                            new SubContainerCreatorByNewPrefab(
                                 container, new PrefabProviderResource(_resourcePath), _gameObjectBindInfo)));
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
                     var containerCreator = new SubContainerCreatorCached(
-                        new SubContainerCreatorByPrefab(
+                        new SubContainerCreatorByNewPrefab(
                             container, new PrefabProviderResource(_resourcePath), _gameObjectBindInfo));
 
                     RegisterProviderPerContract(
