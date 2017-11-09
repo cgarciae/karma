@@ -26,6 +26,7 @@ namespace Karma {
         MVCPresenter currentLayout;
         MVCPresenter currentPresenter;
         public Transform root;
+        public bool useZenjectContext = true;
 
         Stack<IRequest> history = new Stack<IRequest>();
 
@@ -38,7 +39,20 @@ namespace Karma {
             presentersMap = new Dictionary<string, ValuePair<IRoute, Type>>();
             layoutsMap = new Dictionary<string, ValuePair<IRoute, Type>>();
 
+            // If we wish to
+            if (useZenjectContext) {
+                SceneContext context = FindObjectOfType<SceneContext>();
+                if (context != null) {
+                    container = context.Container;
+                } else if (ProjectContext.HasInstance) {
+                    container = ProjectContext.Instance.Container;
+                } else {
                     container = new DiContainer();
+                }
+            } else {
+                container = new DiContainer();
+            }
+            
             container.Bind<IApplication>().FromInstance(this);
             container.Bind<IRouter>().FromInstance(this);
 
@@ -331,6 +345,12 @@ namespace Karma {
             if (request.path == null)
             {
                 throw new Exception("Path cannot be null");
+            }
+
+            if (!presentersMap.ContainsKey(request.path)) {
+                StringBuilder sb = new StringBuilder("Karma is not aware of a presenter called ");
+                sb.Append(request.path);
+                throw new Exception(sb.ToString());
             }
 
             var tuple = presentersMap[request.path];
