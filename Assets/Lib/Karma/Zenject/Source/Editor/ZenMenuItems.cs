@@ -16,13 +16,13 @@ namespace Zenject
         [MenuItem("Edit/Zenject/Validate Current Scenes #%v")]
         public static void ValidateCurrentScene()
         {
-            ValidateInternal();
+            ValidateCurrentSceneInternal();
         }
 
         [MenuItem("Edit/Zenject/Validate Then Run #%r")]
         public static void ValidateCurrentSceneThenRun()
         {
-            if (ValidateInternal())
+            if (ValidateCurrentSceneInternal())
             {
                 EditorApplication.isPlaying = true;
             }
@@ -166,21 +166,27 @@ namespace Zenject
         [MenuItem("Assets/Create/Zenject/Integration Test", false, 60)]
         public static void CreateIntegrationTest()
         {
-            AddCSharpClassTemplate("Integration Test", "UntitledIntegrationTest", true,
+            AddCSharpClassTemplate("Integration Test", "UntitledIntegrationTest", false,
                   "using Zenject;"
-                + "\nusing NUnit.Framework;"
+                + "\nusing System.Collections;"
+                + "\nusing UnityEngine.TestTools;"
                 + "\n"
-                + "\n[TestFixture]"
                 + "\npublic class CLASS_NAME : ZenjectIntegrationTestFixture"
                 + "\n{"
-                + "\n    [Test]"
-                + "\n    public void RunTest1()"
+                + "\n    [UnityTest]"
+                + "\n    public IEnumerator RunTest1()"
                 + "\n    {"
-                + "\n        // TODO: Add bindings"
-                + "\n        "
-                + "\n        Initialize();"
-                + "\n        "
-                + "\n        // TODO"
+                + "\n        // Setup initial state by creating game objects from scratch, loading prefabs/scenes, etc"
+                + "\n"
+                + "\n        PreInstall();"
+                + "\n"
+                + "\n        // Call Container.Bind methods"
+                + "\n"
+                + "\n        PostInstall();"
+                + "\n"
+                + "\n        // Add test assertions for expected state"
+                + "\n        // Using Container.Resolve or [Inject] fields"
+                + "\n        yield break;"
                 + "\n    }"
                 + "\n}");
         }
@@ -238,10 +244,9 @@ namespace Zenject
         static void AddCSharpClassTemplate(
             string friendlyName, string defaultFileName, bool editorOnly, string templateStr)
         {
-            var currentDir = ZenUnityEditorUtil.ConvertFullAbsolutePathToAssetPath(
-                ZenUnityEditorUtil.TryGetSelectedFolderPathInProjectsTab());
+            var folderPath = ZenUnityEditorUtil.GetCurrentDirectoryAssetPathFromSelection();
 
-            if (editorOnly && !currentDir.Contains("/Editor"))
+            if (editorOnly && !folderPath.Contains("/Editor"))
             {
                 EditorUtility.DisplayDialog("Error",
                     "Editor window classes must have a parent folder above them named 'Editor'.  Please create or find an Editor folder and try again", "Ok");
@@ -250,7 +255,7 @@ namespace Zenject
 
             var absolutePath = EditorUtility.SaveFilePanel(
                 "Choose name for " + friendlyName,
-                currentDir,
+                folderPath,
                 defaultFileName + ".cs",
                 "cs");
 
@@ -276,7 +281,17 @@ namespace Zenject
             Selection.activeObject = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(assetPath);
         }
 
-        static bool ValidateInternal()
+        [MenuItem("Edit/Zenject/Validate All Active Scenes")]
+        public static void ValidateAllActiveScenes()
+        {
+            ValidateWrapper(() =>
+                {
+                    var numValidated = ZenUnityEditorUtil.ValidateAllActiveScenes();
+                    Log.Info("Validated all '{0}' active scenes successfully", numValidated);
+                });
+        }
+
+        static bool ValidateWrapper(System.Action action)
         {
             if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
@@ -284,8 +299,7 @@ namespace Zenject
 
                 try
                 {
-                    ZenUnityEditorUtil.ValidateCurrentSceneSetup();
-                    Log.Info("All scenes validated successfully");
+                    action();
                     return true;
                 }
                 catch (Exception e)
@@ -303,6 +317,15 @@ namespace Zenject
                 Debug.Log("Validation cancelled - All scenes must be saved first for validation to take place");
                 return false;
             }
+        }
+
+        static bool ValidateCurrentSceneInternal()
+        {
+            return ValidateWrapper(() =>
+                {
+                    ZenUnityEditorUtil.ValidateCurrentSceneSetup();
+                    Log.Info("All scenes validated successfully");
+                });
         }
     }
 }

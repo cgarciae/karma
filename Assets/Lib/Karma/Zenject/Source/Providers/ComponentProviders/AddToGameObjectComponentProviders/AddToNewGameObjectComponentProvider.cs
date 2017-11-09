@@ -19,14 +19,19 @@ namespace Zenject
             _gameObjectBindInfo = gameObjectBindInfo;
         }
 
+        protected override bool ShouldToggleActive
+        {
+            get { return true; }
+        }
+
         protected override GameObject GetGameObject(InjectContext context)
         {
             if (_gameObjectBindInfo.Name == null)
             {
-                _gameObjectBindInfo.Name = ConcreteIdentifier as string ?? ComponentType.Name();
+                _gameObjectBindInfo.Name = ConcreteIdentifier as string ?? ComponentType.Name;
             }
 
-            return Container.CreateEmptyGameObject(_gameObjectBindInfo);
+            return Container.CreateEmptyGameObject(_gameObjectBindInfo, context);
         }
     }
 }

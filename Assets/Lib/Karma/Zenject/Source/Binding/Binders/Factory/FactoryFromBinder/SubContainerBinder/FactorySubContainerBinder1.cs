@@ -6,21 +6,58 @@ namespace Zenject
         : FactorySubContainerBinderWithParams<TContract>
     {
         public FactorySubContainerBinder(
-            BindInfo bindInfo, Type factoryType,
-            BindFinalizerWrapper finalizerWrapper, object subIdentifier)
-            : base(bindInfo, factoryType, finalizerWrapper, subIdentifier)
+            BindInfo bindInfo, FactoryBindInfo factoryBindInfo, object subIdentifier)
+            : base(bindInfo, factoryBindInfo, subIdentifier)
         {
         }
 
-        public ConditionBinder ByMethod(Action<DiContainer, TParam1> installerMethod)
+        public ConditionCopyNonLazyBinder ByMethod(Action<DiContainer, TParam1> installerMethod)
         {
-            SubFinalizer = CreateFinalizer(
+            ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
                     ContractType, SubIdentifier,
                     new SubContainerCreatorByMethod<TParam1>(
-                        container, installerMethod)));
+                        container, installerMethod));
 
-            return new ConditionBinder(BindInfo);
+            return new ConditionCopyNonLazyBinder(BindInfo);
         }
+
+#if !NOT_UNITY3D
+        public NameTransformConditionCopyNonLazyBinder ByNewPrefabMethod(
+            UnityEngine.Object prefab, Action<DiContainer, TParam1> installerMethod)
+        {
+            BindingUtil.AssertIsValidPrefab(prefab);
+
+            var gameObjectInfo = new GameObjectCreationParameters();
+
+            ProviderFunc =
+                (container) => new SubContainerDependencyProvider(
+                    ContractType, SubIdentifier,
+                    new SubContainerCreatorByNewPrefabMethod<TParam1>(
+                        container,
+                        new PrefabProvider(prefab),
+                        gameObjectInfo, installerMethod));
+
+            return new NameTransformConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
+        }
+
+        public NameTransformConditionCopyNonLazyBinder ByNewPrefabResourceMethod(
+            string resourcePath, Action<DiContainer, TParam1> installerMethod)
+        {
+            BindingUtil.AssertIsValidResourcePath(resourcePath);
+
+            var gameObjectInfo = new GameObjectCreationParameters();
+
+            ProviderFunc =
+                (container) => new SubContainerDependencyProvider(
+                    ContractType, SubIdentifier,
+                    new SubContainerCreatorByNewPrefabMethod<TParam1>(
+                        container,
+                        new PrefabProviderResource(resourcePath),
+                        gameObjectInfo, installerMethod));
+
+            return new NameTransformConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
+        }
+#endif
     }
 }

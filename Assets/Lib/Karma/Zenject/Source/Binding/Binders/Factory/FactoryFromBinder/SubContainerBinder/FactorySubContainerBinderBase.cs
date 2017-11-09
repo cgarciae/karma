@@ -5,26 +5,26 @@ namespace Zenject
 {
     public class FactorySubContainerBinderBase<TContract>
     {
-        readonly BindFinalizerWrapper _finalizerWrapper;
-
         public FactorySubContainerBinderBase(
-            BindInfo bindInfo, Type factoryType,
-            BindFinalizerWrapper finalizerWrapper, object subIdentifier)
+            BindInfo bindInfo, FactoryBindInfo factoryBindInfo, object subIdentifier)
         {
+            FactoryBindInfo = factoryBindInfo;
             SubIdentifier = subIdentifier;
             BindInfo = bindInfo;
-            FactoryType = factoryType;
-
-            _finalizerWrapper = finalizerWrapper;
 
             // Reset so we get errors if we end here
-            finalizerWrapper.SubFinalizer = null;
+            factoryBindInfo.ProviderFunc = null;
         }
 
-        protected Type FactoryType
+        protected FactoryBindInfo FactoryBindInfo
         {
-            get;
-            private set;
+            get; private set;
+        }
+
+        protected Func<DiContainer, IProvider> ProviderFunc
+        {
+            get { return FactoryBindInfo.ProviderFunc; }
+            set { FactoryBindInfo.ProviderFunc = value; }
         }
 
         protected BindInfo BindInfo
@@ -41,44 +41,82 @@ namespace Zenject
 
         protected Type ContractType
         {
-            get
-            {
-                return typeof(TContract);
-            }
+            get { return typeof(TContract); }
         }
 
-        protected IBindingFinalizer SubFinalizer
-        {
-            set
-            {
-                _finalizerWrapper.SubFinalizer = value;
-            }
-        }
-
-        protected IBindingFinalizer CreateFinalizer(Func<DiContainer, IProvider> providerFunc)
-        {
-            return new DynamicFactoryBindingFinalizer<TContract>(
-                BindInfo, FactoryType, providerFunc);
-        }
-
-        public ConditionBinder ByInstaller<TInstaller>()
+        public ArgConditionCopyNonLazyBinder ByInstaller<TInstaller>()
             where TInstaller : InstallerBase
         {
             return ByInstaller(typeof(TInstaller));
         }
 
-        public ConditionBinder ByInstaller(Type installerType)
+        public ArgConditionCopyNonLazyBinder ByInstaller(Type installerType)
         {
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
-                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType.Name());
+                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
 
-            SubFinalizer = CreateFinalizer(
+            ProviderFunc =
                 (container) => new SubContainerDependencyProvider(
                     ContractType, SubIdentifier,
                     new SubContainerCreatorByInstaller(
-                        container, installerType)));
+                        container, installerType, BindInfo.Arguments));
 
-            return new ConditionBinder(BindInfo);
+            return new ArgConditionCopyNonLazyBinder(BindInfo);
         }
+
+#if !NOT_UNITY3D
+        public NameTransformConditionCopyNonLazyBinder ByNewPrefabInstaller<TInstaller>(
+            UnityEngine.Object prefab)
+            where TInstaller : InstallerBase
+        {
+            return ByNewPrefabInstaller(prefab, typeof(TInstaller));
+        }
+
+        public NameTransformConditionCopyNonLazyBinder ByNewPrefabInstaller(
+            UnityEngine.Object prefab, Type installerType)
+        {
+            Assert.That(installerType.DerivesFrom<InstallerBase>(),
+                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
+
+            var gameObjectInfo = new GameObjectCreationParameters();
+
+            ProviderFunc =
+                (container) => new SubContainerDependencyProvider(
+                    ContractType, SubIdentifier,
+                    new SubContainerCreatorByNewPrefabInstaller(
+                        container,
+                        new PrefabProvider(prefab),
+                        gameObjectInfo, installerType, BindInfo.Arguments));
+
+            return new NameTransformConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
+        }
+
+        public NameTransformConditionCopyNonLazyBinder ByNewPrefabResourceInstaller<TInstaller>(
+            string resourcePath)
+            where TInstaller : InstallerBase
+        {
+            return ByNewPrefabResourceInstaller(resourcePath, typeof(TInstaller));
+        }
+
+        public NameTransformConditionCopyNonLazyBinder ByNewPrefabResourceInstaller(
+            string resourcePath, Type installerType)
+        {
+            BindingUtil.AssertIsValidResourcePath(resourcePath);
+            Assert.That(installerType.DerivesFrom<InstallerBase>(),
+                "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType);
+
+            var gameObjectInfo = new GameObjectCreationParameters();
+
+            ProviderFunc =
+                (container) => new SubContainerDependencyProvider(
+                    ContractType, SubIdentifier,
+                    new SubContainerCreatorByNewPrefabInstaller(
+                        container,
+                        new PrefabProviderResource(resourcePath),
+                        gameObjectInfo, installerType, BindInfo.Arguments));
+
+            return new NameTransformConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
+        }
+#endif
     }
 }

@@ -45,14 +45,14 @@ namespace Zenject
             if (_container.IsValidating)
             {
                 // All we can do is validate that the getter object can be resolved
-                _container.Resolve(typeof(TObj));
+                _container.Resolve(GetSubContext(context));
 
                 yield return new List<object>() { new ValidationMarker(typeof(TResult)) };
             }
             else
             {
                 yield return new List<object>() { _method(
-                    _container.Resolve<TObj>(GetSubContext(context))) };
+                    (TObj)_container.Resolve(GetSubContext(context))) };
             }
         }
     }

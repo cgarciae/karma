@@ -5,6 +5,7 @@ namespace Zenject
 {
     public enum ScopeTypes
     {
+        Unset,
         Transient,
         Singleton,
         Cached,
@@ -24,8 +25,9 @@ namespace Zenject
 
     public class BindInfo
     {
-        public BindInfo(List<Type> contractTypes)
+        public BindInfo(List<Type> contractTypes, string contextInfo)
         {
+            ContextInfo = contextInfo;
             Identifier = null;
             ContractTypes = contractTypes;
             ToTypes = new List<Type>();
@@ -33,8 +35,13 @@ namespace Zenject
             ToChoice = ToChoices.Self;
             CopyIntoAllSubContainers = false;
             NonLazy = false;
-            Scope = ScopeTypes.Transient;
+            Scope = ScopeTypes.Unset;
             InvalidBindResponse = InvalidBindResponses.Assert;
+        }
+
+        public BindInfo(List<Type> contractTypes)
+            : this(contractTypes, null)
+        {
         }
 
         public BindInfo(Type contractType)
@@ -45,6 +52,18 @@ namespace Zenject
         public BindInfo()
             : this(new List<Type>())
         {
+        }
+
+        public string ContextInfo
+        {
+            get;
+            private set;
+        }
+
+        public bool RequireExplicitScope
+        {
+            get;
+            set;
         }
 
         public object Identifier

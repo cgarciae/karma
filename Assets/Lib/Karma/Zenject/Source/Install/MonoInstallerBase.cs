@@ -18,18 +18,12 @@ namespace Zenject
 
         protected DiContainer Container
         {
-            get
-            {
-                return _container;
-            }
+            get { return _container; }
         }
 
         public virtual bool IsEnabled
         {
-            get
-            {
-                return this.enabled;
-            }
+            get { return this.enabled; }
         }
 
         public virtual void Start()

@@ -25,7 +25,7 @@ namespace Zenject
         {
             _markRegistry.MarkSingleton(
                 new SingletonId(resultType, concreteIdentifier),
-                SingletonTypes.ToSubContainerMethod);
+                SingletonTypes.FromSubContainerMethod);
 
             ISubContainerCreator subContainerCreator;
 

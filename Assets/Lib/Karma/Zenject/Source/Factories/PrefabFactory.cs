@@ -48,8 +48,8 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
-                prefab, InjectUtil.CreateArgListExplicit(param));
+            return (T)_container.InstantiatePrefabForComponentExplicit(
+                typeof(T), prefab, InjectUtil.CreateArgListExplicit(param));
         }
 
         public virtual T Create(string prefabResourceName, P1 param)
@@ -73,8 +73,8 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
-                prefab, InjectUtil.CreateArgListExplicit(param, param2));
+            return (T)_container.InstantiatePrefabForComponentExplicit(
+                typeof(T), prefab, InjectUtil.CreateArgListExplicit(param, param2));
         }
 
         public virtual T Create(string prefabResourceName, P1 param, P2 param2)
@@ -98,8 +98,8 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
-                prefab, InjectUtil.CreateArgListExplicit(param, param2, param3));
+            return (T)_container.InstantiatePrefabForComponentExplicit(
+                typeof(T), prefab, InjectUtil.CreateArgListExplicit(param, param2, param3));
         }
 
         public virtual T Create(string prefabResourceName, P1 param, P2 param2, P3 param3)
@@ -123,8 +123,8 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
-                prefab, InjectUtil.CreateArgListExplicit(param, param2, param3, param4));
+            return (T)_container.InstantiatePrefabForComponentExplicit(
+                typeof(T), prefab, InjectUtil.CreateArgListExplicit(param, param2, param3, param4));
         }
 
         public virtual T Create(string prefabResourceName, P1 param, P2 param2, P3 param3, P4 param4)

@@ -29,7 +29,7 @@ namespace Zenject
 
             Assert.That(typeof(TReturn).DerivesFromOrEqual(context.MemberType));
 
-            if (_container.IsValidating)
+            if (_container.IsValidating && !DiContainer.CanCreateOrInjectDuringValidation(context.MemberType))
             {
                 yield return new List<object>() { new ValidationMarker(typeof(TReturn)) };
             }

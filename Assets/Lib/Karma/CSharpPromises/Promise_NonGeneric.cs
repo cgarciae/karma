@@ -22,14 +22,14 @@ namespace RSG
         /// onResolved is called on successful completion.
         /// onRejected is called on error.
         /// </summary>
-        void Done(Action onResolved, Action<Exception> onRejected);
+        void Done(System.Action onResolved, System.Action<Exception> onRejected);
 
         /// <summary>
         /// Completes the promise. 
         /// onResolved is called on successful completion.
         /// Adds a default error handler.
         /// </summary>
-        void Done(Action onResolved);
+        void Done(System.Action onResolved);
 
         /// <summary>
         /// Complete the promise. Adds a default error handler.
@@ -39,7 +39,7 @@ namespace RSG
         /// <summary>
         /// Handle errors for the promise. 
         /// </summary>
-        IPromise Catch(Action<Exception> onRejected);
+        IPromise Catch(System.Action<Exception> onRejected);
 
         /// <summary>
         /// Add a resolved callback that chains a value promise (optionally converting to a different value type).
@@ -54,24 +54,24 @@ namespace RSG
         /// <summary>
         /// Add a resolved callback.
         /// </summary>
-        IPromise Then(Action onResolved);
+        IPromise Then(System.Action onResolved);
 
         /// <summary>
         /// Add a resolved callback and a rejected callback.
         /// The resolved callback chains a value promise (optionally converting to a different value type).
         /// </summary>
-        IPromise<ConvertedT> Then<ConvertedT>(Func<IPromise<ConvertedT>> onResolved, Action<Exception> onRejected);
+        IPromise<ConvertedT> Then<ConvertedT>(Func<IPromise<ConvertedT>> onResolved, System.Action<Exception> onRejected);
 
         /// <summary>
         /// Add a resolved callback and a rejected callback.
         /// The resolved callback chains a non-value promise.
         /// </summary>
-        IPromise Then(Func<IPromise> onResolved, Action<Exception> onRejected);
+        IPromise Then(Func<IPromise> onResolved, System.Action<Exception> onRejected);
 
         /// <summary>
         /// Add a resolved callback and a rejected callback.
         /// </summary>
-        IPromise Then(Action onResolved, Action<Exception> onRejected);
+        IPromise Then(System.Action onResolved, System.Action<Exception> onRejected);
 
         /// <summary>
         /// Chain an enumerable of promises, all of which must resolve.
@@ -205,7 +205,7 @@ namespace RSG
             /// <summary>
             /// Callback fn.
             /// </summary>
-            public Action<Exception> callback;
+            public System.Action<Exception> callback;
 
             /// <summary>
             /// The promise that is rejected when there is an error while invoking the handler.
@@ -226,7 +226,7 @@ namespace RSG
             /// <summary>
             /// Callback fn.
             /// </summary>
-            public Action callback;
+            public System.Action callback;
 
             /// <summary>
             /// The promise that is rejected when there is an error while invoking the handler.
@@ -263,7 +263,7 @@ namespace RSG
             }
         }
 
-        public Promise(Action<Action, Action<Exception>> resolver)
+        public Promise(System.Action<System.Action, System.Action<Exception>> resolver)
         {
             this.CurState = PromiseState.Pending;
             if (EnablePromiseTracking)
@@ -290,7 +290,7 @@ namespace RSG
         /// <summary>
         /// Add a rejection handler for this promise.
         /// </summary>
-        private void AddRejectHandler(Action<Exception> onRejected, IRejectable rejectable)
+        private void AddRejectHandler(System.Action<Exception> onRejected, IRejectable rejectable)
         {
             if (rejectHandlers == null)
             {
@@ -307,7 +307,7 @@ namespace RSG
         /// <summary>
         /// Add a resolve handler for this promise.
         /// </summary>
-        private void AddResolveHandler(Action onResolved, IRejectable rejectable)
+        private void AddResolveHandler(System.Action onResolved, IRejectable rejectable)
         {
             if (resolveHandlers == null)
             {
@@ -324,7 +324,7 @@ namespace RSG
         /// <summary>
         /// Invoke a single error handler.
         /// </summary>
-        private void InvokeRejectHandler(Action<Exception> callback, IRejectable rejectable, Exception value)
+        private void InvokeRejectHandler(System.Action<Exception> callback, IRejectable rejectable, Exception value)
         {
             Argument.NotNull(() => callback);
             Argument.NotNull(() => rejectable);
@@ -342,7 +342,7 @@ namespace RSG
         /// <summary>
         /// Invoke a single resolve handler.
         /// </summary>
-        private void InvokeResolveHandler(Action callback, IRejectable rejectable)
+        private void InvokeResolveHandler(System.Action callback, IRejectable rejectable)
         {
             Argument.NotNull(() => callback);
             Argument.NotNull(() => rejectable);
@@ -443,7 +443,7 @@ namespace RSG
         /// onResolved is called on successful completion.
         /// onRejected is called on error.
         /// </summary>
-        public void Done(Action onResolved, Action<Exception> onRejected)
+        public void Done(System.Action onResolved, System.Action<Exception> onRejected)
         {
             Argument.NotNull(() => onResolved);
             Argument.NotNull(() => onRejected);
@@ -459,7 +459,7 @@ namespace RSG
         /// onResolved is called on successful completion.
         /// Adds a default error handler.
         /// </summary>
-        public void Done(Action onResolved)
+        public void Done(System.Action onResolved)
         {
             Argument.NotNull(() => onResolved);
 
@@ -498,19 +498,19 @@ namespace RSG
         /// <summary>
         /// Handle errors for the promise. 
         /// </summary>
-        public IPromise Catch(Action<Exception> onRejected)
+        public IPromise Catch(System.Action<Exception> onRejected)
         {
             Argument.NotNull(() => onRejected);
 
             var resultPromise = new Promise();
             resultPromise.WithName(Name);
 
-            Action resolveHandler = () =>
+            System.Action resolveHandler = () =>
             {
                 resultPromise.Resolve();
             };
 
-            Action<Exception> rejectHandler = ex =>
+            System.Action<Exception> rejectHandler = ex =>
             {
                 onRejected(ex);
 
@@ -541,7 +541,7 @@ namespace RSG
         /// <summary>
         /// Add a resolved callback.
         /// </summary>
-        public IPromise Then(Action onResolved)
+        public IPromise Then(System.Action onResolved)
         {
             return Then(onResolved, null);
         }
@@ -550,7 +550,7 @@ namespace RSG
         /// Add a resolved callback and a rejected callback.
         /// The resolved callback chains a value promise (optionally converting to a different value type).
         /// </summary>
-        public IPromise<ConvertedT> Then<ConvertedT>(Func<IPromise<ConvertedT>> onResolved, Action<Exception> onRejected)
+        public IPromise<ConvertedT> Then<ConvertedT>(Func<IPromise<ConvertedT>> onResolved, System.Action<Exception> onRejected)
         {
             // This version of the function must supply an onResolved.
             // Otherwise there is now way to get the converted value to pass to the resulting promise.
@@ -559,7 +559,7 @@ namespace RSG
             var resultPromise = new Promise<ConvertedT>();
             resultPromise.WithName(Name);
 
-            Action resolveHandler = () =>
+            System.Action resolveHandler = () =>
             {
                 onResolved()
                     .Then(
@@ -570,7 +570,7 @@ namespace RSG
                     .Done();
             };
 
-            Action<Exception> rejectHandler = ex =>
+            System.Action<Exception> rejectHandler = ex =>
             {
                 if (onRejected != null)
                 {
@@ -589,12 +589,12 @@ namespace RSG
         /// Add a resolved callback and a rejected callback.
         /// The resolved callback chains a non-value promise.
         /// </summary>
-        public IPromise Then(Func<IPromise> onResolved, Action<Exception> onRejected)
+        public IPromise Then(Func<IPromise> onResolved, System.Action<Exception> onRejected)
         {
             var resultPromise = new Promise();
             resultPromise.WithName(Name);
 
-            Action resolveHandler = () =>
+            System.Action resolveHandler = () =>
             {
                 if (onResolved != null)
                 {
@@ -611,7 +611,7 @@ namespace RSG
                 }
             };
 
-            Action<Exception> rejectHandler = ex =>
+            System.Action<Exception> rejectHandler = ex =>
             {
                 if (onRejected != null)
                 {
@@ -629,12 +629,12 @@ namespace RSG
         /// <summary>
         /// Add a resolved callback and a rejected callback.
         /// </summary>
-        public IPromise Then(Action onResolved, Action<Exception> onRejected)
+        public IPromise Then(System.Action onResolved, System.Action<Exception> onRejected)
         {
             var resultPromise = new Promise();
             resultPromise.WithName(Name);
 
-            Action resolveHandler = () =>
+            System.Action resolveHandler = () =>
             {
                 if (onResolved != null)
                 {
@@ -644,7 +644,7 @@ namespace RSG
                 resultPromise.Resolve();
             };
 
-            Action<Exception> rejectHandler = ex =>
+            System.Action<Exception> rejectHandler = ex =>
             {
                 if (onRejected != null)
                 {
@@ -662,7 +662,7 @@ namespace RSG
         /// <summary>
         /// Helper function to invoke or register resolve/reject handlers.
         /// </summary>
-        private void ActionHandlers(IRejectable resultPromise, Action resolveHandler, Action<Exception> rejectHandler)
+        private void ActionHandlers(IRejectable resultPromise, System.Action resolveHandler, System.Action<Exception> rejectHandler)
         {
             if (CurState == PromiseState.Resolved)
             {

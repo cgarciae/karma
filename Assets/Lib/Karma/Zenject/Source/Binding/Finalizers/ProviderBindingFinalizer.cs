@@ -14,10 +14,7 @@ namespace Zenject
 
         public bool CopyIntoAllSubContainers
         {
-            get
-            {
-                return BindInfo.CopyIntoAllSubContainers;
-            }
+            get { return BindInfo.CopyIntoAllSubContainers; }
         }
 
         protected BindInfo BindInfo
@@ -26,12 +23,27 @@ namespace Zenject
             private set;
         }
 
+        protected ScopeTypes GetScope()
+        {
+            if (BindInfo.Scope == ScopeTypes.Unset)
+            {
+                // If condition is set then it's probably fine to allow the default of transient
+                Assert.That(!BindInfo.RequireExplicitScope || BindInfo.Condition != null,
+                    "Scope must be set for the previous binding!  Please either specify AsTransient, AsCached, or AsSingle. Last binding: Contract: {0}, Identifier: {1} {2}",
+                    BindInfo.ContractTypes.Select(x => x.ToString()).Join(", "), BindInfo.Identifier,
+                    BindInfo.ContextInfo != null ? "Context: '{0}'".Fmt(BindInfo.ContextInfo) : "");
+                return ScopeTypes.Transient;
+            }
+
+            return BindInfo.Scope;
+        }
+
         public void FinalizeBinding(DiContainer container)
         {
             if (BindInfo.ContractTypes.IsEmpty())
             {
                 // We could assert her instead but it is nice when used with things like
-                // BindAllInterfaces() (and there aren't any interfaces) to allow
+                // BindInterfaces() (and there aren't any interfaces) to allow
                 // interfaces to be added later
                 return;
             }
@@ -40,8 +52,21 @@ namespace Zenject
 
             if (BindInfo.NonLazy)
             {
-                container.BindRootResolve(
-                    BindInfo.Identifier, BindInfo.ContractTypes.ToArray());
+                // Note that we can't simply use container.BindRootResolve here because
+                // binding finalizers must only use RegisterProvider to allow cloning / bind
+                // inheritance to work properly
+                var bindingId = new BindingId(
+                    typeof(object), DiContainer.DependencyRootIdentifier);
+
+                foreach (var contractType in BindInfo.ContractTypes)
+                {
+                    container.RegisterProvider(
+                        bindingId, null, new ResolveProvider(
+                            contractType, container, BindInfo.Identifier, false,
+                            // We always want to only use local here so that we can use
+                            // NonLazy() inside subcontainers
+                            InjectSources.Local));
+                }
             }
         }
 
@@ -116,10 +141,33 @@ namespace Zenject
         // Returns true if the bind should continue, false to skip
         bool ValidateBindTypes(Type concreteType, Type contractType)
         {
+            if (concreteType.IsOpenGenericType() != contractType.IsOpenGenericType())
+            {
+                return false;
+            }
+
+#if !(UNITY_WSA && ENABLE_DOTNET)
+            // TODO: Is it possible to do this on WSA?
+
+            if (contractType.IsOpenGenericType())
+            {
+                Assert.That(concreteType.IsOpenGenericType());
+
+                if (TypeExtensions.IsAssignableToGenericType(concreteType, contractType))
+                {
+                    return true;
+                }
+            }
+            else if (concreteType.DerivesFromOrEqual(contractType))
+            {
+                return true;
+            }
+#else
             if (concreteType.DerivesFromOrEqual(contractType))
             {
                 return true;
             }
+#endif
 
             if (BindInfo.InvalidBindResponse == InvalidBindResponses.Assert)
             {

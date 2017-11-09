@@ -1,6 +1,9 @@
 #if !NOT_UNITY3D
 
+using System;
+using System.Collections.Generic;
 using ModestTree;
+using ModestTree.Util;
 using UnityEngine;
 
 namespace Zenject
@@ -16,12 +19,27 @@ namespace Zenject
         [InjectLocal]
         DisposableManager _disposablesManager = null;
 
-        bool _isDisposed;
+        bool _hasInitialized;
+        bool _isDestroyed;
+
+        protected bool IsDestroyed
+        {
+            get { return _isDestroyed; }
+        }
 
         public virtual void Start()
         {
-            Log.Debug("DependencyRoot ({0}): Start called, Initializing IInitializable's", this.GetType().Name());
-            _initializableManager.Initialize();
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            // We don't put this in start in case Start is overridden
+            if (!_hasInitialized)
+            {
+                _hasInitialized = true;
+                _initializableManager.Initialize();
+            }
         }
 
         public virtual void Update()
@@ -51,40 +69,16 @@ namespace Zenject
             }
         }
 
-        public virtual void OnApplicationQuit()
-        {
-            // _disposablesManager can be null if we get destroyed before the Start event
-            if (_disposablesManager != null)
-            {
-                Log.Debug("MonoDependencyRoot ({0}): OnApplicationQuit called, disposing IDisposable's", this.GetType().Name());
-
-                // In some cases we have monobehaviour's that are bound to IDisposable, and who have
-                // also been set with Application.DontDestroyOnLoad so that the Dispose() is always
-                // called instead of OnDestroy.  This is nice because we can actually reliably predict the
-                // order Dispose() is called in which is not the case for OnDestroy.
-                // However, when the user quits the app, OnDestroy is called even for objects that
-                // have been marked with Application.DontDestroyOnLoad, and so the destruction order
-                // changes.  So to address this case, dispose before the OnDestroy event below (OnApplicationQuit
-                // is always called before OnDestroy) and then don't call dispose in OnDestroy
-                Assert.That(!_isDisposed);
-                _isDisposed = true; // Do this before in case there's exceptions, so we don't call it again below
-                _disposablesManager.Dispose();
-            }
-        }
-
         public virtual void OnDestroy()
         {
             // _disposablesManager can be null if we get destroyed before the Start event
             if (_disposablesManager != null)
             {
-                // See comment in OnApplicationQuit
-                if (!_isDisposed)
-                {
-                    Log.Debug("MonoDependencyRoot ({0}): OnDestroy called, disposing IDisposable's", this.GetType().Name());
+                Assert.That(!_isDestroyed);
+                _isDestroyed = true;
 
-                    _isDisposed = true;
-                    _disposablesManager.Dispose();
-                }
+                _disposablesManager.Dispose();
+                _disposablesManager.LateDispose();
             }
         }
     }

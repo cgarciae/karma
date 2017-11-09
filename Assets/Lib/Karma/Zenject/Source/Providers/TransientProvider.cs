@@ -14,8 +14,12 @@ namespace Zenject
 
         public TransientProvider(
             Type concreteType, DiContainer container,
-            List<TypeValuePair> extraArguments, object concreteIdentifier)
+            List<TypeValuePair> extraArguments, object concreteIdentifier, string bindingContext)
         {
+            Assert.That(!concreteType.IsAbstract(),
+                "Expected non-abstract type for given binding but instead found type '{0}'{1}",
+                concreteType, bindingContext == null ? "" : " when binding '{0}'".Fmt(bindingContext) );
+
             _container = container;
             _concreteType = concreteType;
             _concreteIdentifier = concreteIdentifier;
@@ -25,7 +29,7 @@ namespace Zenject
         public TransientProvider(
             Type concreteType, DiContainer container,
             List<TypeValuePair> extraArguments)
-            : this(concreteType, container, extraArguments, null)
+            : this(concreteType, container, extraArguments, null, null)
         {
         }
 
@@ -53,7 +57,6 @@ namespace Zenject
                 ExtraArgs = _extraArguments.Concat(args).ToList(),
                 Context = context,
                 ConcreteIdentifier = _concreteIdentifier,
-                UseAllArgs = false,
             };
 
             var instance = _container.InstantiateExplicit(
@@ -61,8 +64,6 @@ namespace Zenject
 
             // Return before property/field/method injection to allow circular dependencies
             yield return new List<object>() { instance };
-
-            injectArgs.UseAllArgs = true;
 
             _container.InjectExplicit(instance, instanceType, injectArgs);
         }

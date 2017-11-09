@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ModestTree;
 using UnityEngine;
 
@@ -30,12 +31,12 @@ namespace Zenject
 
             Assert.IsNotNull(context);
 
-            var obj = Resources.Load(_resourcePath, _resourceType);
+            var objects = Resources.LoadAll(_resourcePath, _resourceType).Cast<object>().ToList();
 
-            Assert.IsNotNull(obj,
+            Assert.That(!objects.IsEmpty(),
                 "Could not find resource at path '{0}' with type '{1}'", _resourcePath, _resourceType);
 
-            yield return new List<object>() { obj };
+            yield return objects;
 
             // Are there any resource types which can be injected?
         }
@@ -43,6 +44,5 @@ namespace Zenject
 }
 
 #endif
-
 
 

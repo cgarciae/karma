@@ -24,7 +24,7 @@ namespace Zenject
         public static List<TypeValuePair> CreateArgList(IEnumerable<object> args)
         {
             Assert.That(!args.ContainsItem(null),
-                "Cannot include null values into Zenject method.  Must use the Explicit form if need to do this.");
+                "Cannot include null values when creating a zenject argument list because zenject has no way of deducing the type from a null value.  If you want to allow null, use the Explicit form.");
             return args.Select(x => new TypeValuePair(x.GetType(), x)).ToList();
         }
 

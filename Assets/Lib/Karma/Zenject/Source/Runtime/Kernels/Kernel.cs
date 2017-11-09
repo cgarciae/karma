@@ -4,7 +4,7 @@ using ModestTree;
 namespace Zenject
 {
     [System.Diagnostics.DebuggerStepThrough]
-    public class Kernel : IInitializable, IDisposable, ITickable, ILateTickable, IFixedTickable
+    public class Kernel : IInitializable, IDisposable, ITickable, ILateTickable, IFixedTickable, ILateDisposable
     {
         [InjectLocal]
         TickableManager _tickableManager = null;
@@ -25,8 +25,13 @@ namespace Zenject
         public virtual void Dispose()
         {
             Log.Debug("Zenject: Disposing IDisposable's");
-
             _disposablesManager.Dispose();
+        }
+
+        public virtual void LateDispose()
+        {
+            Log.Debug("Zenject: Disposing ILateDisposable's");
+            _disposablesManager.LateDispose();
         }
 
         public virtual void Tick()

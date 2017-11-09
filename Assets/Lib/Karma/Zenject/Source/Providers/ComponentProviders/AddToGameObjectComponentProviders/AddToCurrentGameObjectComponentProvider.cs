@@ -30,26 +30,17 @@ namespace Zenject
 
         protected DiContainer Container
         {
-            get
-            {
-                return _container;
-            }
+            get { return _container; }
         }
 
         protected Type ComponentType
         {
-            get
-            {
-                return _componentType;
-            }
+            get { return _componentType; }
         }
 
         protected object ConcreteIdentifier
         {
-            get
-            {
-                return _concreteIdentifier;
-            }
+            get { return _concreteIdentifier; }
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -62,7 +53,7 @@ namespace Zenject
             Assert.IsNotNull(context);
 
             Assert.That(context.ObjectType.DerivesFrom<Component>(),
-                "Object '{0}' can only be injected into MonoBehaviour's since it was bound with 'FromSiblingComponent'. Attempted to inject into non-MonoBehaviour '{1}'",
+                "Object '{0}' can only be injected into MonoBehaviour's since it was bound with 'FromNewComponentSibling'. Attempted to inject into non-MonoBehaviour '{1}'",
                 context.MemberType, context.ObjectType);
 
             object instance;
@@ -93,7 +84,6 @@ namespace Zenject
             var injectArgs = new InjectArgs()
             {
                 ExtraArgs = _extraArguments.Concat(args).ToList(),
-                UseAllArgs = true,
                 Context = context,
                 ConcreteIdentifier = _concreteIdentifier,
             };

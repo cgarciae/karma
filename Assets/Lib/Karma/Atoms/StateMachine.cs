@@ -30,7 +30,7 @@ namespace Atoms {
 			Debug.Log (actual.key);
 			
 			actual.OnEnter();
-			Action changeState = () => {
+            System.Action changeState = () => {
 				//Debug.Log (_state);
 				
 				actual.OnExit();
@@ -82,8 +82,8 @@ namespace Atoms {
 		public Func<A> onFinish;
 		public bool restartOnEnter;
 		
-		public event Action onEnter;
-		public event Action onExit;
+		public event System.Action onEnter;
+		public event System.Action onExit;
 		
 		public bool transitive = false;
 		

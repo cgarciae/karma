@@ -17,22 +17,58 @@ namespace Zenject
         // Don't use this
         public static void ValidateCurrentSceneSetup()
         {
-            Assert.That(!ProjectContext.HasInstance);
-            ProjectContext.ValidateOnNextRun = true;
+            bool encounteredError = false;
 
-            foreach (var sceneContext in GetAllSceneContexts())
+            Application.LogCallback logCallback = (condition, stackTrace, type) =>
             {
-                try
+                if (type == LogType.Error || type == LogType.Assert
+                        || type == LogType.Exception)
+                {
+                    encounteredError = true;
+                }
+            };
+
+            Application.logMessageReceived += logCallback;
+
+            try
+            {
+                Assert.That(!ProjectContext.HasInstance);
+                ProjectContext.ValidateOnNextRun = true;
+
+                foreach (var sceneContext in GetAllSceneContexts())
                 {
                     sceneContext.Validate();
                 }
-                catch (Exception e)
-                {
-                    // Add a bit more context
-                    throw new ZenjectException(
-                        "Scene '{0}' Failed Validation!".Fmt(sceneContext.gameObject.scene.name), e);
-                }
             }
+            catch (Exception e)
+            {
+                Log.ErrorException(e);
+                encounteredError = true;
+            }
+            finally
+            {
+                Application.logMessageReceived -= logCallback;
+            }
+
+            if (encounteredError)
+            {
+                throw new ZenjectException("Zenject Validation Failed!  See errors below for details.");
+            }
+        }
+
+        // Don't use this
+        public static int ValidateAllActiveScenes()
+        {
+            var activeScenePaths = UnityEditor.EditorBuildSettings.scenes.Where(x => x.enabled)
+                .Select(x => x.path).ToList();
+
+            foreach (var scenePath in activeScenePaths)
+            {
+                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+                ValidateCurrentSceneSetup();
+            }
+
+            return activeScenePaths.Count;
         }
 
         // Don't use this
@@ -103,9 +139,43 @@ namespace Zenject
 
         public static string ConvertFullAbsolutePathToAssetPath(string fullPath)
         {
-            return "Assets/" + Path.GetFullPath(fullPath)
-                .Remove(0, Path.GetFullPath(Application.dataPath).Length + 1)
-                .Replace("\\", "/");
+            fullPath = Path.GetFullPath(fullPath);
+
+            var assetFolderFullPath = Path.GetFullPath(Application.dataPath);
+
+            if (fullPath.Length == assetFolderFullPath.Length)
+            {
+                Assert.IsEqual(fullPath, assetFolderFullPath);
+                return "Assets";
+            }
+
+            var assetPath = fullPath.Remove(0, assetFolderFullPath.Length + 1).Replace("\\", "/");
+            return "Assets/" + assetPath;
+        }
+
+        public static string GetCurrentDirectoryAssetPathFromSelection()
+        {
+            return ZenUnityEditorUtil.ConvertFullAbsolutePathToAssetPath(
+                GetCurrentDirectoryAbsolutePathFromSelection());
+        }
+
+        public static string GetCurrentDirectoryAbsolutePathFromSelection()
+        {
+            var folderPath = ZenUnityEditorUtil.TryGetSelectedFolderPathInProjectsTab();
+
+            if (folderPath != null)
+            {
+                return folderPath;
+            }
+
+            var filePath = ZenUnityEditorUtil.TryGetSelectedFilePathInProjectsTab();
+
+            if (filePath != null)
+            {
+                return Path.GetDirectoryName(filePath);
+            }
+
+            return Application.dataPath;
         }
 
         public static string TryGetSelectedFilePathInProjectsTab()

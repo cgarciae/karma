@@ -13,7 +13,7 @@ namespace Atoms {
 				yield return null;
 		}}
 		
-		public static IEnumerable Do (Action f)
+		public static IEnumerable Do (System.Action f)
 		{
 			f();
 			yield return null;
@@ -24,7 +24,7 @@ namespace Atoms {
             return f();
         }
 
-        public static IEnumerable KeepDoing (Action f)
+        public static IEnumerable KeepDoing (System.Action f)
 		{
 			while (true) {
 				f();
@@ -41,7 +41,7 @@ namespace Atoms {
         }
 		
 		public static void Nothing (){}
-		public static IEnumerable DoNothing = Do ((Action)Nothing);
+		public static IEnumerable DoNothing = Do ((System.Action)Nothing);
 
         public static Func<bool> Not(Func<bool> cond)
         {
@@ -102,12 +102,12 @@ namespace Atoms {
             return e1.Then(While(cond, e2));
         }
 
-        public static IEnumerable While(Func<bool> cond, Action f)
+        public static IEnumerable While(Func<bool> cond, System.Action f)
         {
             return While(cond, KeepDoing(f));
         }
 
-        public static IEnumerable While(this IEnumerable e, Func<bool> cond, Action f)
+        public static IEnumerable While(this IEnumerable e, Func<bool> cond, System.Action f)
         {
             return e.Then(While(cond, f));
         }
@@ -200,7 +200,7 @@ namespace Atoms {
             yield return f((A)ator.Current);
         }
 
-        public static IEnumerable Then (this IEnumerable e, Action f)
+        public static IEnumerable Then (this IEnumerable e, System.Action f)
 		{
 			var ator = e.GetEnumerator();
 			
@@ -306,7 +306,7 @@ namespace Atoms {
             );
         }
 
-        public static IEnumerable When(Func<bool> cond, Action whenTrue, Action whenFalse = null, Func<bool> stopCond = null)
+        public static IEnumerable When(Func<bool> cond, System.Action whenTrue, System.Action whenFalse = null, Func<bool> stopCond = null)
         {
             whenFalse = whenFalse != null ?
                 whenFalse :
@@ -315,7 +315,7 @@ namespace Atoms {
             return When(cond, KeepDoing(whenTrue), KeepDoing(whenFalse), stopCond);
         }
 
-        public static IEnumerable When(this IEnumerable e, Func<bool> cond, Action whenTrue, Action whenFalse = null, Func<bool> stopCond = null)
+        public static IEnumerable When(this IEnumerable e, Func<bool> cond, System.Action whenTrue, System.Action whenFalse = null, Func<bool> stopCond = null)
         {
             return e.Then(When(cond, whenTrue, whenFalse, stopCond));
         }
@@ -374,7 +374,7 @@ namespace Atoms {
 
         }
 
-        public static IEnumerable WhenComplete(this IEnumerable e, Action f) {
+        public static IEnumerable WhenComplete(this IEnumerable e, System.Action f) {
             return e
                 .CatchError<Exception>((Exception ex) => { })
                 .Then(f);
@@ -394,7 +394,7 @@ namespace Atoms {
             while (enu.MoveNext()) { }
         }
 
-        public static IEnumerable ForEachDo(this IEnumerable e, Action f)
+        public static IEnumerable ForEachDo(this IEnumerable e, System.Action f)
         {
             foreach (var n in e)
             {
