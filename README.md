@@ -105,6 +105,9 @@ git clone https://github.com/cgarciae/karma.git
 
 and then copy the folders `/Assets/App` and `/Assets/Lib` to your project.
 
+##### Zenject Contexts
+Karma was built to work without any other library-specific stuff, like Zenject Contexts - and by default this means that contexts are wiped. To use your Zenject context features, like installers, scene persistent objects, etc. you need to enable the `Use Zenject Context` checkbox, which you will find on your `Karma App` gameobject (using the Unity Editor).
+
 ##### Videos
 ###### Hello World
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=OFKYqwdJa2Y
