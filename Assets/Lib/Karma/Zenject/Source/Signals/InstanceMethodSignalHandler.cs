@@ -38,12 +38,12 @@ namespace Zenject
 
     public class InstanceMethodSignalHandler<THandler> : InstanceMethodSignalHandlerBase<THandler>
     {
-        readonly Func<THandler, System.Action> _methodGetter;
+        readonly Func<THandler, Action> _methodGetter;
 
         [Inject]
         public InstanceMethodSignalHandler(
             BindingId signalId, SignalManager manager, InjectContext lookupContext,
-            Func<THandler, System.Action> methodGetter)
+            Func<THandler, Action> methodGetter)
             : base(signalId, manager, lookupContext)
         {
             _methodGetter = methodGetter;

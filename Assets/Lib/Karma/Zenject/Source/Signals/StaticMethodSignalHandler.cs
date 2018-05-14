@@ -7,10 +7,10 @@ namespace Zenject
 {
     public class StaticMethodSignalHandler : SignalHandlerBase
     {
-        readonly System.Action _method;
+        readonly Action _method;
 
         public StaticMethodSignalHandler(
-            BindingId signalId, SignalManager manager, System.Action method)
+            BindingId signalId, SignalManager manager, Action method)
             : base(signalId, manager)
         {
             _method = method;

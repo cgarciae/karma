@@ -26,38 +26,44 @@ namespace Karma {
         MVCPresenter currentLayout;
         MVCPresenter currentPresenter;
         public Transform root;
-        public bool useZenjectContext = true;
-
+        public bool useZenjectContext = false;
+        
         Stack<IRequest> history = new Stack<IRequest>();
-
+        
         public void Awake()
         {
             if (root == null)
                 root = this.transform;
 
-            this.app = this;
+            app = this;
             presentersMap = new Dictionary<string, ValuePair<IRoute, Type>>();
             layoutsMap = new Dictionary<string, ValuePair<IRoute, Type>>();
 
-            // If we wish to
-            if (useZenjectContext) {
+            // On a strictly optional basis, use an existing Zenject context/installer system
+            if (useZenjectContext) 
+            {
                 SceneContext context = FindObjectOfType<SceneContext>();
-                if (context != null) {
+                if (context != null) 
+                {
                     container = context.Container;
-                } else if (ProjectContext.HasInstance) {
-                    container = ProjectContext.Instance.Container;
-                } else {
-                    container = new DiContainer();
                 }
-            } else {
-                container = new DiContainer();
+                else if (ProjectContext.HasInstance) 
+                {
+                    container = ProjectContext.Instance.Container;
+                } 
+                else // We need to create a context to work in, here... 
+                {
+                    CreateZenjectContext();
+                }
+            } 
+            else // ...or here 
+            {
+                CreateZenjectContext();
             }
-            
-            container.Bind<IApplication>().FromInstance(this);
-            container.Bind<IRouter>().FromInstance(this);
 
+            container.BindInterfacesAndSelfTo<App>().FromInstance(this).AsCached();
             SetupDI();
-            
+
             Configure(this, container);
         }
 
@@ -75,7 +81,15 @@ namespace Karma {
                 Back();
             }
         }
-        
+
+        protected void CreateZenjectContext()
+        {
+            GameObject context = new GameObject("ZenjectSceneContext");
+            context.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave | HideFlags.NotEditable;
+            Context zenContext = context.AddComponent<SceneContext>();
+            container = new DiContainer();
+            container.BindInterfacesAndSelfTo<Context>().FromInstance(zenContext).AsCached();
+        }
     
         public DiContainer SetupDI()
         {

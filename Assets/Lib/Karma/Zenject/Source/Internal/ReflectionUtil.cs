@@ -103,7 +103,7 @@ namespace ModestTree.Util
             return "{0}.{1}".Fmt(method.DeclaringType.Name(), method.Name);
         }
 
-        public static string ToDebugString(this System.Action action)
+        public static string ToDebugString(this Action action)
         {
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
             return action.ToString();
