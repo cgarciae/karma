@@ -336,6 +336,7 @@ namespace Karma {
                     ClearView(current);
 
                     current = newView;
+                    return resp;
                 });
         }
 
@@ -374,8 +375,10 @@ namespace Karma {
             {
                 response.layoutType = layoutsMap[route.layoutPath].Second;
             }
-            
-            return new Promise<IResponse>(response);
+
+            var prom = new Promise<IResponse>();
+            prom.Resolve(response);
+            return prom;
         }
 
         IEnumerable<Middleware> middlewares
