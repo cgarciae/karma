@@ -40,7 +40,7 @@ namespace Zenject
                 info, _container.Bind<THandler>(info).WithId(lookupId).To<THandler>());
         }
 
-        public SignalFromBinder<THandler> To<THandler>(Func<THandler, System.Action> methodGetter)
+        public SignalFromBinder<THandler> To<THandler>(Func<THandler, Action> methodGetter)
         {
             // This is just to ensure they don't stop at BindSignal
             _finalizerWrapper.SubFinalizer = new NullBindingFinalizer();
@@ -56,7 +56,7 @@ namespace Zenject
                 info, _container.Bind<THandler>(info).WithId(lookupId).To<THandler>());
         }
 
-        public void To(System.Action method)
+        public void To(Action method)
         {
             // This is just to ensure they don't stop at BindSignal
             _finalizerWrapper.SubFinalizer = new NullBindingFinalizer();

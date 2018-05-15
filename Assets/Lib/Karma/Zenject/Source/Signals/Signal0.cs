@@ -14,21 +14,21 @@ namespace Zenject
     {
         void Fire();
 
-        void Listen(System.Action listener);
-        void Unlisten(System.Action listener);
+        void Listen(Action listener);
+        void Unlisten(Action listener);
     }
 
     public abstract class Signal<TDerived> : SignalBase, ISignal
         where TDerived : Signal<TDerived>
     {
-        readonly List<System.Action> _listeners = new List<System.Action>();
+        readonly List<Action> _listeners = new List<Action>();
 #if ZEN_SIGNALS_ADD_UNIRX
         readonly Subject<Unit> _observable = new Subject<Unit>();
 #endif
-        readonly List<System.Action> _tempListeners = new List<System.Action>();
+        readonly List<Action> _tempListeners = new List<Action>();
 
 #if ZEN_SIGNALS_ADD_UNIRX
-        public UniRx.IObservable<Unit> AsObservable
+        public IObservable<Unit> AsObservable
         {
             get
             {
@@ -42,7 +42,7 @@ namespace Zenject
             get { return _listeners.Count; }
         }
 
-        public void Listen(System.Action listener)
+        public void Listen(Action listener)
         {
             if (_listeners.Contains(listener))
             {
@@ -52,7 +52,7 @@ namespace Zenject
             _listeners.Add(listener);
         }
 
-        public void Unlisten(System.Action listener)
+        public void Unlisten(Action listener)
         {
             bool success = _listeners.Remove(listener);
 
@@ -63,13 +63,13 @@ namespace Zenject
             }
         }
 
-        public static TDerived operator + (Signal<TDerived> signal, System.Action listener)
+        public static TDerived operator + (Signal<TDerived> signal, Action listener)
         {
             signal.Listen(listener);
             return (TDerived)signal;
         }
 
-        public static TDerived operator - (Signal<TDerived> signal, System.Action listener)
+        public static TDerived operator - (Signal<TDerived> signal, Action listener)
         {
             signal.Unlisten(listener);
             return (TDerived)signal;

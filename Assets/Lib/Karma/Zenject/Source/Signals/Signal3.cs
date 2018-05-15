@@ -23,12 +23,12 @@ namespace Zenject
     {
         readonly List<Action<TParam1, TParam2, TParam3>> _listeners = new List<Action<TParam1, TParam2, TParam3>>();
 #if ZEN_SIGNALS_ADD_UNIRX
-        readonly Subject<UniRx.Tuple<TParam1, TParam2, TParam3>> _observable = new Subject<UniRx.Tuple<TParam1, TParam2, TParam3>>();
+        readonly Subject<Tuple<TParam1, TParam2, TParam3>> _observable = new Subject<Tuple<TParam1, TParam2, TParam3>>();
 #endif
         readonly List<Action<TParam1, TParam2, TParam3>> _tempListeners = new List<Action<TParam1, TParam2, TParam3>>();
 
 #if ZEN_SIGNALS_ADD_UNIRX
-        public UniRx.IObservable<UniRx.Tuple<TParam1, TParam2, TParam3>> AsObservable
+        public IObservable<Tuple<TParam1, TParam2, TParam3>> AsObservable
         {
             get
             {
@@ -114,7 +114,7 @@ namespace Zenject
                 using (ProfileBlock.Start("UniRx Stream"))
 #endif
                 {
-                    _observable.OnNext(UniRx.Tuple.Create(p1, p2, p3));
+                    _observable.OnNext(Tuple.Create(p1, p2, p3));
                 }
 #endif
 
