@@ -85,10 +85,9 @@ namespace Karma {
         protected void CreateZenjectContext()
         {
             GameObject context = new GameObject("ZenjectSceneContext");
-            context.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave | HideFlags.NotEditable;
+            context.hideFlags = HideFlags.HideInHierarchy | HideFlags.NotEditable;
             Context zenContext = context.AddComponent<SceneContext>();
-            container = new DiContainer();
-            container.BindInterfacesAndSelfTo<Context>().FromInstance(zenContext).AsCached();
+            container = zenContext.Container;
         }
     
         public DiContainer SetupDI()
