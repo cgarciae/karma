@@ -85,7 +85,7 @@ namespace Karma {
         protected void CreateZenjectContext()
         {
             GameObject context = new GameObject("ZenjectSceneContext");
-            context.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSave | HideFlags.NotEditable;
+            context.hideFlags = HideFlags.HideInHierarchy | HideFlags.NotEditable;
             Context zenContext = context.AddComponent<SceneContext>();
             container = zenContext.Container;
         }
@@ -163,8 +163,14 @@ namespace Karma {
 
         public static void RegisterService(DiContainer container, Type type)
         {
-            container.Bind(type).AsSingle();
+            // since zenject 6+ we have to check that we're not attempting to re-bind a Single[ton]
+            // this only matters if you're using your own Zenject context (if you don't know, you aren't!)
+            if (!container.HasBinding(type))
+            {
+                container.Bind(type).AsSingle();                
+            }
         }
+        
         /*
         public IApplication RegisterRoute<T>(DiContainer container, string url) where T : MonoBehaviour
         {

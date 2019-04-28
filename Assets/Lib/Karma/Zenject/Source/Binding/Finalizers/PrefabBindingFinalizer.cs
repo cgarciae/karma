@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Zenject
 {
+    [NoReflectionBaking]
     public class PrefabBindingFinalizer : ProviderBindingFinalizer
     {
         readonly GameObjectCreationParameters _gameObjectBindInfo;
@@ -39,21 +40,10 @@ namespace Zenject
 
         void FinalizeBindingConcrete(DiContainer container, List<Type> concreteTypes)
         {
-            switch (GetScope())
+            var scope = GetScope();
+
+            switch (scope)
             {
-                case ScopeTypes.Singleton:
-                {
-                    RegisterProvidersForAllContractsPerConcreteType(
-                        container,
-                        concreteTypes,
-                        (_, concreteType) => container.SingletonProviderCreator.CreateProviderForPrefab(
-                            _prefab,
-                            concreteType,
-                            _gameObjectBindInfo,
-                            BindInfo.Arguments,
-                            BindInfo.ConcreteIdentifier, _providerFactory));
-                    break;
-                }
                 case ScopeTypes.Transient:
                 {
                     RegisterProvidersForAllContractsPerConcreteType(
@@ -66,11 +56,13 @@ namespace Zenject
                                     container,
                                     _gameObjectBindInfo,
                                     concreteType,
+                                    concreteTypes,
                                     BindInfo.Arguments,
-                                    new PrefabProvider(_prefab))));
+                                    new PrefabProvider(_prefab),
+                                    BindInfo.InstantiatedCallback)));
                     break;
                 }
-                case ScopeTypes.Cached:
+                case ScopeTypes.Singleton:
                 {
                     var argumentTarget = concreteTypes.OnlyOrDefault();
 
@@ -85,13 +77,15 @@ namespace Zenject
                             container,
                             _gameObjectBindInfo,
                             argumentTarget,
+                            concreteTypes,
                             BindInfo.Arguments,
-                            new PrefabProvider(_prefab)));
+                            new PrefabProvider(_prefab),
+                            BindInfo.InstantiatedCallback));
 
                     RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
-                        (_, concreteType) => new CachedProvider(
+                        (_, concreteType) => BindingUtil.CreateCachedProvider(
                             _providerFactory(concreteType, prefabCreator)));
                     break;
                 }
@@ -104,20 +98,10 @@ namespace Zenject
 
         void FinalizeBindingSelf(DiContainer container)
         {
-            switch (GetScope())
+            var scope = GetScope();
+
+            switch (scope)
             {
-                case ScopeTypes.Singleton:
-                {
-                    RegisterProviderPerContract(
-                        container,
-                        (_, contractType) => container.SingletonProviderCreator.CreateProviderForPrefab(
-                            _prefab,
-                            contractType,
-                            _gameObjectBindInfo,
-                            BindInfo.Arguments,
-                            BindInfo.ConcreteIdentifier, _providerFactory));
-                    break;
-                }
                 case ScopeTypes.Transient:
                 {
                     RegisterProviderPerContract(
@@ -129,11 +113,13 @@ namespace Zenject
                                     container,
                                     _gameObjectBindInfo,
                                     contractType,
+                                    BindInfo.ContractTypes,
                                     BindInfo.Arguments,
-                                    new PrefabProvider(_prefab))));
+                                    new PrefabProvider(_prefab),
+                                    BindInfo.InstantiatedCallback)));
                     break;
                 }
-                case ScopeTypes.Cached:
+                case ScopeTypes.Singleton:
                 {
                     var argumentTarget = BindInfo.ContractTypes.OnlyOrDefault();
 
@@ -148,13 +134,15 @@ namespace Zenject
                             container,
                             _gameObjectBindInfo,
                             argumentTarget,
+                            BindInfo.ContractTypes,
                             BindInfo.Arguments,
-                            new PrefabProvider(_prefab)));
+                            new PrefabProvider(_prefab),
+                            BindInfo.InstantiatedCallback));
 
                     RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
-                            new CachedProvider(
+                            BindingUtil.CreateCachedProvider(
                                 _providerFactory(contractType, prefabCreator)));
                     break;
                 }
