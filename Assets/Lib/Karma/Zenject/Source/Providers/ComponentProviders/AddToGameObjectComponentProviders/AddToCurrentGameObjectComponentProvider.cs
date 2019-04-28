@@ -5,27 +5,41 @@ using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
 using UnityEngine;
-using Zenject;
+using Zenject.Internal;
 
 namespace Zenject
 {
+    [NoReflectionBaking]
     public class AddToCurrentGameObjectComponentProvider : IProvider
     {
-        readonly object _concreteIdentifier;
         readonly Type _componentType;
         readonly DiContainer _container;
         readonly List<TypeValuePair> _extraArguments;
+        readonly object _concreteIdentifier;
+        readonly Action<InjectContext, object> _instantiateCallback;
 
         public AddToCurrentGameObjectComponentProvider(
             DiContainer container, Type componentType,
-            object concreteIdentifier, List<TypeValuePair> extraArguments)
+            IEnumerable<TypeValuePair> extraArguments, object concreteIdentifier,
+            Action<InjectContext, object> instantiateCallback)
         {
             Assert.That(componentType.DerivesFrom<Component>());
 
-            _concreteIdentifier = concreteIdentifier;
-            _extraArguments = extraArguments;
+            _extraArguments = extraArguments.ToList();
             _componentType = componentType;
             _container = container;
+            _concreteIdentifier = concreteIdentifier;
+            _instantiateCallback = instantiateCallback;
+        }
+
+        public bool IsCached
+        {
+            get { return false; }
+        }
+
+        public bool TypeVariesBasedOnMemberType
+        {
+            get { return false; }
         }
 
         protected DiContainer Container
@@ -38,17 +52,13 @@ namespace Zenject
             get { return _componentType; }
         }
 
-        protected object ConcreteIdentifier
-        {
-            get { return _concreteIdentifier; }
-        }
-
         public Type GetInstanceType(InjectContext context)
         {
             return _componentType;
         }
 
-        public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(InjectContext context, List<TypeValuePair> args)
+        public void GetAllInstancesWithInjectSplit(
+            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
         {
             Assert.IsNotNull(context);
 
@@ -58,16 +68,21 @@ namespace Zenject
 
             object instance;
 
-            if (!_container.IsValidating || DiContainer.CanCreateOrInjectDuringValidation(_componentType))
+            if (!_container.IsValidating || TypeAnalyzer.ShouldAllowDuringValidation(_componentType))
             {
                 var gameObj = ((Component)context.ObjectInstance).gameObject;
 
-                instance = gameObj.GetComponent(_componentType);
+                var componentInstance = gameObj.GetComponent(_componentType);
+                instance = componentInstance;
 
-                if (instance != null)
+                // Use componentInstance so that it triggers unity's overloaded comparison operator
+                // So if the component is there but missing then it returns null
+                // (https://github.com/svermeulen/Zenject/issues/582)
+                if (componentInstance != null)
                 {
-                    yield return new List<object>() { instance };
-                    yield break;
+                    injectAction = null;
+                    buffer.Add(instance);
+                    return;
                 }
 
                 instance = gameObj.AddComponent(_componentType);
@@ -79,18 +94,26 @@ namespace Zenject
 
             // Note that we don't just use InstantiateComponentOnNewGameObjectExplicit here
             // because then circular references don't work
-            yield return new List<object>() { instance };
 
-            var injectArgs = new InjectArgs()
+            injectAction = () =>
             {
-                ExtraArgs = _extraArguments.Concat(args).ToList(),
-                Context = context,
-                ConcreteIdentifier = _concreteIdentifier,
+                var extraArgs = ZenPools.SpawnList<TypeValuePair>();
+
+                extraArgs.AllocFreeAddRange(_extraArguments);
+                extraArgs.AllocFreeAddRange(args);
+
+                _container.InjectExplicit(instance, _componentType, extraArgs, context, _concreteIdentifier);
+
+                Assert.That(extraArgs.IsEmpty());
+                ZenPools.DespawnList(extraArgs);
+
+                if (_instantiateCallback != null)
+                {
+                    _instantiateCallback(context, instance);
+                }
             };
 
-            _container.InjectExplicit(instance, _componentType, injectArgs);
-
-            Assert.That(injectArgs.ExtraArgs.IsEmpty());
+            buffer.Add(instance);
         }
     }
 }

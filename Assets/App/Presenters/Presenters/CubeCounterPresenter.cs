@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Karma;
-using System;
 using Karma.Metadata;
 using Zenject;
 using UnityEngine.UI;
@@ -35,7 +33,10 @@ public class CubeCounterPresenter : MVCPresenter
 
     internal void SetCubeNumber(int cubes)
     {
-        numberOfCubes.text = cubes.ToString();
+        if (numberOfCubes != null)
+        {
+            numberOfCubes.text = cubes.ToString();            
+        }
     }
 
     public void CreateCube()
@@ -55,7 +56,10 @@ public class CubeCounterPresenter : MVCPresenter
 
     internal void SetMaxCubeNumber(int max)
     {
-        maxNumberOfCubes.text = max.ToString();
+        if (!maxNumberOfCubes.IsDestroyed())
+        {
+            maxNumberOfCubes.text = max.ToString();
+        }
     }
 
     public void GoBack()
